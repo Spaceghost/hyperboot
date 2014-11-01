@@ -34,19 +34,19 @@ Boot.prototype._createRoutes = function () {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         readFile('index.html').pipe(res);
     });
-    r.addRoute('/bootver.js', function (req, res, params) {
+    r.addRoute('/hyperboot.js', function (req, res, params) {
         res.setHeader('content-type', 'text/javascript; charset=UTF-8');
         res.setHeader('cache-control', 'max-age=' + self.maxage);
-        readFile('bootver.js').pipe(res);
+        readFile('hyperboot.js').pipe(res);
     });
-    r.addRoute('/bootver.appcache', function (req, res, params) {
+    r.addRoute('/hyperboot.appcache', function (req, res, params) {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         res.setHeader('content-type', 'text/cache-manifest; charset=UTF-8');
         
         res.end('CACHE MANIFEST\n'
             + path.join(self.prefix) + '\n'
-            + path.join(self.prefix, 'bootver.appcache') + '\n'
-            + path.join(self.prefix, 'bootver.js') + '\n'
+            + path.join(self.prefix, 'hyperboot.appcache') + '\n'
+            + path.join(self.prefix, 'hyperboot.js') + '\n'
             + 'NETWORK:\n'
             + 'versions.json\n'
         );
