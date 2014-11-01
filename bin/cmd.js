@@ -15,7 +15,7 @@ var argv = minimist(process.argv.slice(2), {
         v: 'version'
     },
     default: {
-        rdir: defined(process.env.BOOTVER_RELEASEDIR, 'bootver_release')
+        rdir: defined(process.env.BOOTVER_RELEASEDIR, 'bootver')
     }
 });
 var dir = defined(argv.dir, path.join(process.cwd(), argv.rdir));
