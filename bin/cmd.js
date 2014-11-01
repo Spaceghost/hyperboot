@@ -12,6 +12,7 @@ var hyperboot = require('../');
 var argv = minimist(process.argv.slice(2), {
     alias: {
         d: [ 'dir', 'datadir' ],
+        p: 'port',
         rdir: 'releasedir',
         m: 'message',
         v: [ 'version', 'verbose' ]
@@ -48,7 +49,7 @@ else if (argv._[0] === 'server') {
             res.statuSCode = 404;
             res.end('not found\n');
         });
-        server.listen(0, function () {
+        server.listen(argv.port, function () {
             console.error('http://localhost:' + server.address().port);
         });
     });
