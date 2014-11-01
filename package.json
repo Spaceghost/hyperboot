@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "browserify browser.js -o static/appver.js",
-    "watch": "watchify browser.js -o static/appver.js -dv"
+    "build": "browserify browser/main.js -o static/appver.js",
+    "watch": "watchify browser/main.js -o static/appver.js -dv"
   }
 }

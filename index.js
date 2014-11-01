@@ -5,10 +5,10 @@ var defined = require('defined');
 var routes = require('routes');
 var rprefix = require('route-prefix');
 
-module.exports = AppVer;
+module.exports = BootVer;
 
-function AppVer (opts) {
-    if (!(this instanceof AppVer)) return new AppVer(opts);
+function BootVer (opts) {
+    if (!(this instanceof BootVer)) return new BootVer(opts);
     if (!opts) opts = {};
     this.prefix = path.resolve('/', defined(opts.prefix, '/'));
     this.router = this._createRoutes(); //rprefix(this.prefix, this._createRoutes());
@@ -18,14 +18,14 @@ function AppVer (opts) {
     );
 }
 
-AppVer.prototype.exec = function (req, res) {
+BootVer.prototype.exec = function (req, res) {
     var m = this.router.match(req.url);
     if (!m) return null;
     m.fn(req, res, m);
     return true;
 };
 
-AppVer.prototype._createRoutes = function () {
+BootVer.prototype._createRoutes = function () {
     var self = this;
     var r = routes();
     r.addRoute('/', function (req, res, params) {
