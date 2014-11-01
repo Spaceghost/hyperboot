@@ -1,12 +1,16 @@
-bootver release HTMLFILE { -m MESSAGE, -v VERSION }
+hyperboot release HTMLFILE { -m MESSAGE, -v VERSION }
 
-  Create a release
+  Create a release from HTMLFILE, a self-contained html payload.
+  All of HTMLFILE's assets should be inlined.
+  
+  Optionally, set a MESSAGE and VERSION for the release. These will be visible
+  to the user along with the hash of the release.
 
-bootver server { -p PORT }
+hyperboot server { -p PORT }
 
-  Start an http server.
+  Start an http server for the app.
 
-bootver list
+hyperboot list
 
   Show the available releases.
 

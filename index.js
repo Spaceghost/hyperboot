@@ -5,10 +5,10 @@ var defined = require('defined');
 var routes = require('routes');
 var rprefix = require('route-prefix');
 
-module.exports = BootVer;
+module.exports = Boot;
 
-function BootVer (opts) {
-    if (!(this instanceof BootVer)) return new BootVer(opts);
+function Boot (opts) {
+    if (!(this instanceof Boot)) return new Boot(opts);
     if (!opts) opts = {};
     this.prefix = path.resolve('/', defined(opts.prefix, '/'));
     this.router = this._createRoutes(); //rprefix(this.prefix, this._createRoutes());
@@ -19,14 +19,14 @@ function BootVer (opts) {
     this.dir = opts.dir;
 }
 
-BootVer.prototype.exec = function (req, res) {
+Boot.prototype.exec = function (req, res) {
     var m = this.router.match(req.url);
     if (!m) return null;
     m.fn(req, res, m);
     return true;
 };
 
-BootVer.prototype._createRoutes = function () {
+Boot.prototype._createRoutes = function () {
     var self = this;
     var r = routes();
     r.addRoute('/', function (req, res, params) {
@@ -34,19 +34,19 @@ BootVer.prototype._createRoutes = function () {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         readFile('index.html').pipe(res);
     });
-    r.addRoute('/appver.js', function (req, res, params) {
+    r.addRoute('/bootver.js', function (req, res, params) {
         res.setHeader('content-type', 'text/javascript; charset=UTF-8');
         res.setHeader('cache-control', 'max-age=' + self.maxage);
-        readFile('appver.js').pipe(res);
+        readFile('bootver.js').pipe(res);
     });
-    r.addRoute('/appver.appcache', function (req, res, params) {
+    r.addRoute('/bootver.appcache', function (req, res, params) {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         res.setHeader('content-type', 'text/cache-manifest; charset=UTF-8');
         
         res.end('CACHE MANIFEST\n'
             + path.join(self.prefix) + '\n'
-            + path.join(self.prefix, 'appver.appcache') + '\n'
-            + path.join(self.prefix, 'appver.js') + '\n'
+            + path.join(self.prefix, 'bootver.appcache') + '\n'
+            + path.join(self.prefix, 'bootver.js') + '\n'
             + 'NETWORK:\n'
             + 'versions.json\n'
         );

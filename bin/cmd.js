@@ -7,17 +7,17 @@ var defined = require('defined');
 var mkdirp = require('mkdirp');
 var tmpdir = require('osenv').tmpdir;
 var parents = require('parents');
-var bootver = require('../');
+var hyperboot = require('../');
 
 var argv = minimist(process.argv.slice(2), {
     alias: {
         d: [ 'dir', 'datadir' ],
         rdir: 'releasedir',
         m: 'message',
-        v: 'version'
+        v: [ 'version', 'verbose' ]
     },
     default: {
-        rdir: defined(process.env.BOOTVER_RELEASEDIR, 'bootver')
+        rdir: defined(process.env.HTMLVER_RELEASEDIR, 'hyperboot')
     }
 });
 
@@ -41,8 +41,9 @@ else if (argv._[0] === 'release') {
 else if (argv._[0] === 'server') {
     var http = require('http');
     withDir(function (dir) {
-        var boot = bootver({ dir: dir });
+        var boot = hyperboot({ dir: dir });
         var server = http.createServer(function (req, res) {
+            if (argv.verbose) console.error(req.method, req.url);
             if (boot.exec(req, res)) return;
             res.statuSCode = 404;
             res.end('not found\n');
