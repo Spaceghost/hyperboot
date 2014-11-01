@@ -4,6 +4,7 @@ var path = require('path');
 var defined = require('defined');
 var routes = require('routes');
 var rprefix = require('route-prefix');
+var hyperstream = require('hyperstream');
 
 module.exports = Boot;
 
@@ -17,6 +18,7 @@ function Boot (opts) {
         Math.floor(60 * 60 * 24 * 365.25 * 100) // ~100 years
     );
     this.dir = opts.dir;
+    this.vars = { name: defined(opts.name, 'APPLICATION') };
 }
 
 Boot.prototype.exec = function (req, res) {
@@ -29,7 +31,14 @@ Boot.prototype.exec = function (req, res) {
 Boot.prototype._createRoutes = function () {
     var self = this;
     var r = routes();
-    serveFile('/', 'index.html', 'text/html; charset=UTF-8');
+    r.addRoute('/', function (req, res, params) {
+        res.setHeader('cache-control', 'max-age=' + self.maxage);
+        res.setHeader('content-type', 'text/html; charset=UTF-8');
+        readFile('index.html').pipe(hyperstream({
+            '*[data-name]': self.vars.name
+        })).pipe(res);
+    });
+    
     serveFile('hyperboot.js', 'text/javascript; charset=UTF-8');
     serveFile('hyperboot.png', 'image/png');
     serveFile('hyperboot.css', 'text/css; charset=UTF-8');
@@ -56,13 +65,8 @@ Boot.prototype._createRoutes = function () {
     });
     return r;
     
-    function serveFile (p, file, type) {
-        if (type === undefined) {
-            type = file;
-            file = p;
-            p = '/' + p;
-        }
-        r.addRoute(p, function (req, res, params) {
+    function serveFile (file, type) {
+        r.addRoute('/' + file, function (req, res, params) {
             res.setHeader('content-type', type);
             res.setHeader('cache-control', 'max-age=' + self.maxage);
             readFile(file).pipe(res);
