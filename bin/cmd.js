@@ -7,6 +7,7 @@ var defined = require('defined');
 var mkdirp = require('mkdirp');
 var tmpdir = require('osenv').tmpdir;
 var parents = require('parents');
+var bootver = require('../');
 
 var argv = minimist(process.argv.slice(2), {
     alias: {
@@ -35,6 +36,20 @@ else if (argv._[0] === 'release') {
             if (err) error(err)
             else console.log(hex)
         }));
+    });
+}
+else if (argv._[0] === 'server') {
+    var http = require('http');
+    withDir(function (dir) {
+        var boot = bootver({ dir: dir });
+        var server = http.createServer(function (req, res) {
+            if (boot.exec(req, res)) return;
+            res.statuSCode = 404;
+            res.end('not found\n');
+        });
+        server.listen(0, function () {
+            console.error('http://localhost:' + server.address().port);
+        });
     });
 }
 else usage(1);

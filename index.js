@@ -16,6 +16,7 @@ function BootVer (opts) {
         opts.maxage,
         Math.floor(60 * 60 * 24 * 365.25 * 100) // ~100 years
     );
+    this.dir = opts.dir;
 }
 
 BootVer.prototype.exec = function (req, res) {
@@ -52,8 +53,9 @@ BootVer.prototype._createRoutes = function () {
     });
     r.addRoute('/versions.json', function (req, res, params) {
         res.setHeader('content-type', 'application/json');
-        res.write('{"0.0.0":"da39a3ee5e6b4b0d3255bfef95601890afd80709"}\n');
-        res.end();
+        var r = fs.createReadStream(path.join(self.dir, 'versions.json'));
+        r.on('error', function (err) { res.end('') });
+        r.pipe(res);
     });
     return r;
 };
