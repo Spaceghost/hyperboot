@@ -29,21 +29,11 @@ Boot.prototype.exec = function (req, res) {
 Boot.prototype._createRoutes = function () {
     var self = this;
     var r = routes();
-    r.addRoute('/', function (req, res, params) {
-        res.setHeader('content-type', 'text/html; charset=UTF-8');
-        res.setHeader('cache-control', 'max-age=' + self.maxage);
-        readFile('index.html').pipe(res);
-    });
-    r.addRoute('/hyperboot.js', function (req, res, params) {
-        res.setHeader('content-type', 'text/javascript; charset=UTF-8');
-        res.setHeader('cache-control', 'max-age=' + self.maxage);
-        readFile('hyperboot.js').pipe(res);
-    });
-    r.addRoute('/hyperboot.png', function (req, res, params) {
-        res.setHeader('content-type', 'image/png');
-        res.setHeader('cache-control', 'max-age=' + self.maxage);
-        readFile('hyperboot.png').pipe(res);
-    });
+    serveFile('/', 'index.html', 'text/html; charset=UTF-8');
+    serveFile('hyperboot.js', 'text/javascript; charset=UTF-8');
+    serveFile('hyperboot.png', 'image/png');
+    serveFile('hyperboot.css', 'text/css; charset=UTF-8');
+    
     r.addRoute('/hyperboot.appcache', function (req, res, params) {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         res.setHeader('content-type', 'text/cache-manifest; charset=UTF-8');
@@ -52,6 +42,8 @@ Boot.prototype._createRoutes = function () {
             + path.join(self.prefix) + '\n'
             + path.join(self.prefix, 'hyperboot.appcache') + '\n'
             + path.join(self.prefix, 'hyperboot.js') + '\n'
+            + path.join(self.prefix, 'hyperboot.png') + '\n'
+            + path.join(self.prefix, 'hyperboot.css') + '\n'
             + 'NETWORK:\n'
             + 'versions.json\n'
         );
@@ -63,6 +55,19 @@ Boot.prototype._createRoutes = function () {
         r.pipe(res);
     });
     return r;
+    
+    function serveFile (p, file, type) {
+        if (type === undefined) {
+            type = file;
+            file = p;
+            p = '/' + p;
+        }
+        r.addRoute(p, function (req, res, params) {
+            res.setHeader('content-type', type);
+            res.setHeader('cache-control', 'max-age=' + self.maxage);
+            readFile(file).pipe(res);
+        });
+    }
 };
 
 function readFile (file) {
