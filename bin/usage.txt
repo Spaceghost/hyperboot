@@ -1,0 +1,12 @@
+bootver release HTMLFILE { -m MESSAGE, -v VERSION }
+
+  Create a release
+
+bootver server { -p PORT }
+
+  Start an http server.
+
+bootver list
+
+  Show the available releases.
+
