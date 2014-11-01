@@ -51,7 +51,6 @@ BootVer.prototype._createRoutes = function () {
         );
     });
     r.addRoute('/versions.json', function (req, res, params) {
-        res.setHeader('cache-control', 'max-age=' + self.maxage);
         res.setHeader('content-type', 'application/json');
         res.write('{"0.0.0":"da39a3ee5e6b4b0d3255bfef95601890afd80709"}\n');
         res.end();

@@ -1,4 +1,9 @@
 {
+  "name": "bootver",
+  "version": "0.0.0",
+  "bin": {
+    "bootver": "bin/cmd.js"
+  },
   "scripts": {
     "build": "browserify browser/main.js -o static/appver.js",
     "watch": "watchify browser/main.js -o static/appver.js -dv"
