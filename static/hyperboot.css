@@ -14,15 +14,23 @@ body {
 }
 
 #sidebar {
-  background-color: purple;
+  display: none;
   position: absolute;
   top: 0px;
   right: 0px;
   bottom: 0px;
   width: 0px;
   height: 100%;
+  background-color: rgb(210,165,240);
+  padding-left: 10px;
+  color: rgb(50,20,60);
+}
+
+#sidebar h1 {
+  margin-top: 0px;
 }
 
 #page.sideview #sidebar {
+  display: block;
   width: 400px;
 }

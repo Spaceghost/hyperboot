@@ -13,6 +13,7 @@ var argv = minimist(process.argv.slice(2), {
     alias: {
         d: [ 'dir', 'datadir' ],
         p: 'port',
+        n: 'name',
         rdir: 'releasedir',
         m: 'message',
         v: [ 'version', 'verbose' ]
