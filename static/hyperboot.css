@@ -1,5 +1,5 @@
 body {
-  margin: auto;
+  margin: 0;
 }
 
 #frame {
@@ -13,15 +13,11 @@ body {
   border-width: 0px;
 }
 
-#page.sideview #frame {
-  right: 400px;
-}
-
 #sidebar {
   background-color: purple;
   position: absolute;
   top: 0px;
-  right 0px;
+  right: 0px;
   bottom: 0px;
   width: 0px;
   height: 100%;

@@ -5,7 +5,6 @@ var iwin = document.querySelector('#frame').contentWindow;
 iwin.addEventListener('keydown', toggleView);
 
 function toggleView (ev) {
-    console.log(ev.which);
     if (ev.which === 119) {
         ev.preventDefault();
         document.querySelector('#page').classList.toggle('sideview');
