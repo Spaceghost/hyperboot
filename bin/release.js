@@ -8,7 +8,7 @@ var tmpdir = require('osenv').tmpdir;
 
 module.exports = function (dir, opts, cb) {
     var tmpfile = path.join(
-        tmpdir(), '.bootver-' + Date.now() + '-' + Math.random()
+        tmpdir(), '.hyperboot-' + Date.now() + '-' + Math.random()
     );
     var jsonfile = path.join(dir, 'versions.json');
     

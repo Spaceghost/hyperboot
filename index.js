@@ -39,6 +39,11 @@ Boot.prototype._createRoutes = function () {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         readFile('hyperboot.js').pipe(res);
     });
+    r.addRoute('/hyperboot.png', function (req, res, params) {
+        res.setHeader('content-type', 'image/png');
+        res.setHeader('cache-control', 'max-age=' + self.maxage);
+        readFile('hyperboot.png').pipe(res);
+    });
     r.addRoute('/hyperboot.appcache', function (req, res, params) {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         res.setHeader('content-type', 'text/cache-manifest; charset=UTF-8');
