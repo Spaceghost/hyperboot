@@ -18,6 +18,7 @@ var argv = minimist(process.argv.slice(2), {
         m: 'message',
         v: [ 'version', 'verbose' ]
     },
+    boolean: [ 'dev' ],
     default: {
         rdir: defined(process.env.HTMLVER_RELEASEDIR, 'hyperboot')
     }
@@ -43,7 +44,11 @@ else if (argv._[0] === 'release') {
 else if (argv._[0] === 'server') {
     var http = require('http');
     withDir(function (dir) {
-        var boot = hyperboot({ dir: dir, name: argv.name });
+        var boot = hyperboot({
+            dir: dir,
+            name: argv.name,
+            dev: argv.dev
+        });
         var server = http.createServer(function (req, res) {
             if (argv.verbose) console.error(req.method, req.url);
             if (boot.exec(req, res)) return;

@@ -13,9 +13,11 @@ function Boot (opts) {
     if (!opts) opts = {};
     this.prefix = path.resolve('/', defined(opts.prefix, '/'));
     this.router = this._createRoutes(); //rprefix(this.prefix, this._createRoutes());
+    
+    if (opts.dev) this.dev = true;
     this.maxage = defined(
         opts.maxage,
-        Math.floor(60 * 60 * 24 * 365.25 * 100) // ~100 years
+        this.dev ? 0 : Math.floor(60 * 60 * 24 * 365.25 * 100) // ~100 years
     );
     this.dir = opts.dir;
     this.vars = { name: defined(opts.name, 'APPLICATION') };
@@ -34,14 +36,16 @@ Boot.prototype._createRoutes = function () {
     r.addRoute('/', function (req, res, params) {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         res.setHeader('content-type', 'text/html; charset=UTF-8');
-        readFile('index.html').pipe(hyperstream({
-            '*[data-name]': self.vars.name
-        })).pipe(res);
+        
+        var props = { '*[data-name]': self.vars.name };
+        if (self.dev) props['html:first'] = { manifest: undefined };
+        readFile('index.html').pipe(hyperstream(props)).pipe(res);
     });
     
     serveFile('hyperboot.js', 'text/javascript; charset=UTF-8');
     serveFile('hyperboot.png', 'image/png');
     serveFile('hyperboot.css', 'text/css; charset=UTF-8');
+    serveFile('fonts/start.ttf', 'font/ttf');
     
     r.addRoute('/hyperboot.appcache', function (req, res, params) {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
@@ -53,6 +57,7 @@ Boot.prototype._createRoutes = function () {
             + path.join(self.prefix, 'hyperboot.js') + '\n'
             + path.join(self.prefix, 'hyperboot.png') + '\n'
             + path.join(self.prefix, 'hyperboot.css') + '\n'
+            + path.join(self.prefix, 'fonts/start.ttf') + '\n'
             + 'NETWORK:\n'
             + 'versions.json\n'
         );
