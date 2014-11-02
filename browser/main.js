@@ -24,6 +24,9 @@ xhr('versions.json', function (err, res, body) {
     versions.update(JSON.parse(body));
 });
 
+var last = localStorage.getItem('hyberboot-current');
+if (last) load(last);
+
 function load (hash) {
     var src = localStorage.getItem('hyperboot-data-' + hash);
     if (src && shasum(src) === hash) return show(src);
@@ -45,6 +48,9 @@ function load (hash) {
     });
     
     function show (body) {
+        versions.select(hash);
+        localStorage.setItem('hyberboot-current', hash);
+        
         iframe.contentWindow.location.reload();
         iframe.addEventListener('load', function fn () {
             iframe.removeEventListener('load', fn);

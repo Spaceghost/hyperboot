@@ -3,6 +3,7 @@ var semver = require('semver');
 var has = require('has');
 var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
+var classList = require('class-list');
 
 var template = require('./templates.js');
 
@@ -25,6 +26,7 @@ function Versions (root) {
         self.lnums[v.version] = v;
         self.lhashes[v.hash] = v;
     });
+    self.elements = {};
 }
 
 Versions.prototype.show = function (v) {
@@ -33,6 +35,9 @@ Versions.prototype.show = function (v) {
         '.hash': v.hash,
         '.message': v.message
     });
+    this.elements[v.hash] = elem;
+    if (this._currentHash === v.hash) this.select(v.hash);
+    
     for (var i = 1; i < this.root.children.length; i++) {
         var c = this.root.children[i];
         var cver = c.querySelector('.ver').textContent;
@@ -44,6 +49,16 @@ Versions.prototype.show = function (v) {
     }
     this.root.appendChild(elem);
     this.emit('version', v, elem);
+};
+
+Versions.prototype.select = function (hash) {
+    if (this._currentElem) classList(this._currentElem).remove('current')
+    var elem = this.elements[hash];
+    this._currentHash = hash;
+    if (elem) {
+        this._currentElem = elem;
+        classList(elem).add('current');
+    }
 };
 
 Versions.prototype.update = function (rvers) {

@@ -7,6 +7,7 @@
   "description": "offline versioned webapp bootloader",
   "main": "index.js",
   "dependencies": {
+    "class-list": "^0.1.1",
     "concat-stream": "~1.4.6",
     "defined": "~0.0.0",
     "has": "~1.0.0",
@@ -14,8 +15,8 @@
     "hyperstream": "~1.2.1",
     "inherits": "~2.0.1",
     "isarray": "~0.0.1",
-    "mkdirp": "~0.5.0",
     "minimist": "~1.1.0",
+    "mkdirp": "~0.5.0",
     "osenv": "~0.1.0",
     "parents": "~1.0.0",
     "route-prefix": "~1.0.1",
