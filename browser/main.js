@@ -1,6 +1,7 @@
 var xhr = require('xhr');
 var hyperglue = require('hyperglue');
 var isarray = require('isarray');
+var semver = require('semver');
 var has = require('has');
 
 var templateNodes = document.querySelectorAll('*[template]');
@@ -27,11 +28,19 @@ function toggleView (ev) {
 
 var verdiv = document.querySelector('#versions');
 function showVersion (v) {
-    verdiv.appendChild(template.version({
+    var elem = template.version({
         '.ver': v.version,
         '.hash': v.hash,
         '.message': v.message
-    }));
+    });
+    for (var i = 1; i < verdiv.children.length; i++) {
+        var c = verdiv.children[i];
+        var cver = c.querySelector('.ver').textContent;
+        if (semver.gt(v.version, cver)) {
+            return verdiv.insertBefore(elem, c);
+        }
+    }
+    verdiv.appendChild(elem);
 }
 
 var lvers = getLocalVersions();
