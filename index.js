@@ -58,7 +58,8 @@ Boot.prototype._createRoutes = function () {
             + path.join(self.prefix, 'hyperboot.css') + '\n'
             + 'NETWORK:\n'
             + path.join(self.prefix, 'versions.json') + '\n'
-            + path.join(self.prefix, 'data/*') + '\n'
+            //+ path.join(self.prefix, 'data/*') + '\n' // <-- doesn't work
+            + '*\n' // whatever, lame
         );
     });
     r.addRoute('/versions.json', function (req, res, params) {
