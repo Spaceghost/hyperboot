@@ -45,6 +45,11 @@ function load (hash) {
     });
     
     function show (body) {
-        iframe.contentWindow.document.documentElement.innerHTML = body;
+        var idoc = iframe.contentWindow.document;
+        idoc.documentElement.innerHTML = body;
+        var scripts = idoc.querySelectorAll('script');
+        for (var i = 0; i < scripts.length; i++) {
+            eval(scripts[i].textContent);
+        }
     }
 }
