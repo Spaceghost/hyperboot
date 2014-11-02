@@ -57,8 +57,7 @@ Boot.prototype._createRoutes = function () {
             + path.join(self.prefix, 'hyperboot.png') + '\n'
             + path.join(self.prefix, 'hyperboot.css') + '\n'
             + 'NETWORK:\n'
-            + path.join(self.prefix, 'versions.json') + '\n'
-            //+ path.join(self.prefix, 'data/*') + '\n' // <-- doesn't work
+            //+ path.join(self.prefix, 'versions.json') + '\n'
             + '*\n' // whatever, lame
         );
     });
@@ -69,7 +68,7 @@ Boot.prototype._createRoutes = function () {
         r.pipe(res);
     });
     r.addRoute('/data/:hash', function (req, res, params) {
-        res.setHeader('content-type', 'text/plain; charset=UTF-8');
+        res.setHeader('content-type', 'text/html; charset=UTF-8');
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         
         if (/[^A-Za-z0-9]/.test(params.hash)) {
