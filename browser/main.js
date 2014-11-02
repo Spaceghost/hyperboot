@@ -1,4 +1,5 @@
 var xhr = require('xhr');
+var shasum = require('sha256');
 
 window.addEventListener('keydown', toggleView);
 var iframe = document.querySelector('#frame');
@@ -28,11 +29,26 @@ xhr('versions.json', function (err, res, body) {
 });
 
 function load (hash) {
+    var src = localStorage.getItem('hyperboot-data-' + hash);
+    if (src && shasum(src) === hash) return show(src);
+    
     xhr('data/' + hash, function (err, res, body) {
-        console.log('body=', body);
-        console.log('res=', res);
-        if (err) {} // ...
-        if (!body || !/^2/.test(res.statusCode)) return; // ...
-        iframe.setAttribute('src', 'data:text/html;base64,' + btoa(body));
+        if (err) {
+            console.error(err);
+        }
+        else if (!body || !/^2/.test(res.statusCode)) {
+            console.error('error code ' + res.statusCode);
+        }
+        else if (shasum(body) !== hash) {
+            console.error('hash mismatch\n');
+        }
+        else {
+            show(body);
+            localStorage.setItem('hyperboot-data-' + hash, body);
+        }
     });
+    
+    function show (body) {
+        iframe.setAttribute('src', 'data:text/html;base64,' + btoa(body));
+    }
 }
