@@ -75,12 +75,17 @@ body {
 
 #versions .version {
   position: relative;
-  padding-left: 20px;
+  padding-left: 10px;
   padding-top: 10px;
   padding-bottom: 10px;
   background-color: rgb(240,210,250);
-  margin-left: -10px;
   margin-bottom: 4px;
+}
+
+#versions .version.current {
+  background-color: orange;
+  border-left: 6px solid rgb(140,80,160);
+  padding-left: 4px;
 }
 
 #versions .version:hover {
@@ -89,8 +94,9 @@ body {
   cursor: pointer;
 }
 
-#versions .version.current {
-  border: 3px solid orange;
+#versions .version.current:hover {
+  background-color: orange;
+  color: rgb(50,10,70);
 }
 
 #versions .version .ver {
