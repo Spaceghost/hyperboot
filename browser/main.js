@@ -45,6 +45,6 @@ function load (hash) {
     });
     
     function show (body) {
-        iframe.setAttribute('src', 'data:text/html;base64,' + btoa(body));
+        iframe.contentWindow.document.documentElement.innerHTML = body;
     }
 }
