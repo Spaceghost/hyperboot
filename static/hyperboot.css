@@ -1,8 +1,3 @@
-@font-face {
-  font-family: 'press start';
-  src: url('fonts/start.ttf');
-}
-
 body {
   margin: 0;
 }
@@ -28,8 +23,8 @@ body {
   height: 100%;
   background-color: rgb(210,165,240);
   padding-left: 10px;
-  color: rgb(50,20,60);
-  font-family: 'press start';
+  color: rgb(80,20,120);
+  font-family: sans-serif;
 }
 
 #sidebar h1 {
@@ -39,4 +34,11 @@ body {
 #page.sideview #sidebar {
   display: block;
   width: 400px;
+}
+
+#versions .version {
+}
+
+.template {
+  display: none;
 }
