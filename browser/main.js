@@ -1,14 +1,16 @@
 var xhr = require('xhr');
 var hyperglue = require('hyperglue');
+var isarray = require('isarray');
+var has = require('has');
 
-var templateNodes = document.querySelectorAll('.template');
+var templateNodes = document.querySelectorAll('*[template]');
 var template = {};
 for (var i = 0; i < templateNodes.length; i++) {
     var t = templateNodes[i];
     template[t.getAttribute('template')] = function (vars) {
         var elem = t.cloneNode(true);
         elem.removeAttribute('template');
-        return hyperglue(vars, elem);
+        return hyperglue(elem, vars);
     };
 }
 
@@ -23,17 +25,56 @@ function toggleView (ev) {
     }
 }
 
-xhr('versions.json', function (err, res, body) {
-console.log('body=', body, res);
-    var versions = JSON.parse(body);
-    console.log('versions=' + JSON.stringify(versions));
-    var verdiv = document.querySelector('#versions');
-    Object.keys(versions).forEach(function (hash) {
-        var v = versions[hash];
-        verdiv.appendChild(template.version({
-            '.version': v.version,
-            '.hash': hash,
-            '.message': v.message
-        }));
-    });
+var verdiv = document.querySelector('#versions');
+function showVersion (v) {
+    verdiv.appendChild(template.version({
+        '.ver': v.version,
+        '.hash': v.hash,
+        '.message': v.message
+    }));
+}
+
+var lvers = getLocalVersions();
+lvers.forEach(showVersion);
+
+var lhashes = {}, lnums = {};
+lvers.forEach(function (v) {
+    lnums[v.version] = v;
+    lhashes[v.hash] = v;
 });
+
+xhr('versions.json', function (err, res, body) {
+    if (!body || !/^2/.test(res.statusCode)) return;
+    var rvers = JSON.parse(body);
+    var newvers = [];
+    
+    rvers.forEach(function (v) {
+        if (has(lhashes, v.hash)) {
+            var lv = lhashes[v.hash];
+            if (lv.message !== v.message) {} // conflict!
+            else if (lv.version !== v.version) {} // conflict!
+            else {} // ok...
+        }
+        else if (has(lnums, v.version)) {
+            var lv = lnums[v.version];
+            if (lv.message !== v.message) {} // conflict!
+            else if (lv.version !== v.version) {} // conflict!
+            else {} // ok...
+        }
+        else newvers.push(v);
+    });
+    
+    lvers.push.apply(lvers, newvers);
+    localStorage.setItem('hyperboot-versions', JSON.stringify(lvers));
+    newvers.forEach(showVersion);
+});
+
+function getLocalVersions () {
+    try {
+        var s = localStorage.getItem('hyperboot-versions') || '[]';
+        var versions = JSON.parse(s);
+    }
+    catch (err) { return [] }
+    if (!isarray(versions)) return [];
+    return versions;
+}

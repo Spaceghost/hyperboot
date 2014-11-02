@@ -22,23 +22,39 @@ body {
   width: 0px;
   height: 100%;
   background-color: rgb(210,165,240);
-  padding-left: 10px;
+  padding-left: 15px;
   color: rgb(80,20,120);
   font-family: sans-serif;
 }
 
 #sidebar h1 {
   margin-top: 5px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #page.sideview #sidebar {
   display: block;
-  width: 400px;
+  width: 450px;
 }
 
 #versions .version {
-  padding: 5px;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   background-color: rgb(240,210,250);
+  margin-left: -10px;
+  margin-bottom: 4px;
+}
+
+#versions .version .ver {
+  font-weight: bold;
+}
+
+#versions .version .hash {
+  font-family: monospace;
+  font-size: 0.85em;
+  word-break: break-all;
 }
 
 *[template] {

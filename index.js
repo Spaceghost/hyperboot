@@ -45,7 +45,6 @@ Boot.prototype._createRoutes = function () {
     serveFile('hyperboot.js', 'text/javascript; charset=UTF-8');
     serveFile('hyperboot.png', 'image/png');
     serveFile('hyperboot.css', 'text/css; charset=UTF-8');
-    serveFile('fonts/start.ttf', 'font/ttf');
     
     r.addRoute('/hyperboot.appcache', function (req, res, params) {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
