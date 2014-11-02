@@ -1,9 +1,12 @@
 var isarray = require('isarray');
 var semver = require('semver');
 var has = require('has');
+var inherits = require('inherits');
+var EventEmitter = require('events').EventEmitter;
 
 var template = require('./templates.js');
 
+inherits(Versions, EventEmitter);
 module.exports = Versions;
 
 function Versions (root) {
@@ -12,7 +15,9 @@ function Versions (root) {
     self.root = root;
     
     self.lvers = getLocalVersions();
-    self.lvers.forEach(function (v) { self.show(v) });
+    process.nextTick(function () {
+        self.lvers.forEach(function (v) { self.show(v) });
+    });
     
     self.lhashes = {};
     self.lnums = {};
@@ -32,10 +37,13 @@ Versions.prototype.show = function (v) {
         var c = this.root.children[i];
         var cver = c.querySelector('.ver').textContent;
         if (semver.gt(v.version, cver)) {
-            return this.root.insertBefore(elem, c);
+            this.root.insertBefore(elem, c);
+            this.emit('version', v, elem);
+            return;
         }
     }
     this.root.appendChild(elem);
+    this.emit('version', v, elem);
 };
 
 Versions.prototype.update = function (rvers) {

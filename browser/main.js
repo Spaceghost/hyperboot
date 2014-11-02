@@ -14,6 +14,12 @@ function toggleView (ev) {
 var verdiv = document.querySelector('#versions');
 var versions = require('./versions.js')(verdiv);
 
+versions.on('version', function (version, elem) {
+    elem.addEventListener('click', function (ev) {
+        console.log('clicked:', version);
+    });
+});
+
 xhr('versions.json', function (err, res, body) {
     if (!body || !/^2/.test(res.statusCode)) return;
     versions.update(JSON.parse(body));
