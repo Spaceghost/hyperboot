@@ -1,6 +1,8 @@
 # hyperboot
 
-webapp versioning for end users
+offline versioned webapp bootloader
+
+[Try the demo.](http://demo.hyperboot.org)
 
 Single page applications, where appropriate, have many usability benefits: you
 can just give someone a URL and they can immediately start using the
