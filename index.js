@@ -65,7 +65,7 @@ Boot.prototype._createRoutes = function () {
     r.addRoute('/versions.json', function (req, res, params) {
         res.setHeader('content-type', 'application/json');
         var r = fs.createReadStream(path.join(self.dir, 'versions.json'));
-        r.on('error', function (err) { res.end('') });
+        r.on('error', function (err) { res.end('[]') });
         r.pipe(res);
     });
     return r;

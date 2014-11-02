@@ -8,7 +8,18 @@
       <iframe id="frame"></iframe>
       <div id="sidebar">
         <h1 data-name>${APPLICATION NAME}</h1>
-        <div id="versions"></div>
+        <div class="current">
+          <div class="hash"></div>
+          <div class="version"></div>
+        </div>
+        <div id="versions">
+          <h2>versions</h2>
+          <div template="version">
+            <div class="version"></div>
+            <div class="hash"></div>
+            <div class="message"></div>
+          </div>
+        </div>
       </div>
       <div id="message"></div>
     </div>

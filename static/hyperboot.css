@@ -37,8 +37,10 @@ body {
 }
 
 #versions .version {
+  padding: 5px;
+  background-color: rgb(240,210,250);
 }
 
-.template {
+*[template] {
   display: none;
 }

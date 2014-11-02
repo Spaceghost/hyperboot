@@ -20,7 +20,7 @@ var argv = minimist(process.argv.slice(2), {
     },
     boolean: [ 'dev' ],
     default: {
-        rdir: defined(process.env.HTMLVER_RELEASEDIR, 'hyperboot')
+        rdir: defined(process.env.HTMLVER_RELEASEDIR, 'hyperdata')
     }
 });
 
@@ -81,7 +81,7 @@ function withDir (cb) {
     (function next () {
         if (dirs.length === 0) return cb(path.join(process.cwd(), argv.rdir));
         var dir = dirs.shift();
-        fs.stat(path.join(dir, argv.rdir), function (err) {
+        fs.stat(path.join(dir, argv.rdir, 'versions.json'), function (err) {
             if (err) next()
             else cb(path.join(dir, argv.rdir))
         });
