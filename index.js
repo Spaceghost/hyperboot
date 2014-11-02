@@ -26,7 +26,7 @@ function Boot (opts) {
 Boot.prototype.exec = function (req, res) {
     var m = this.router.match(req.url);
     if (!m) return null;
-    m.fn(req, res, m);
+    m.fn(req, res, m.params);
     return true;
 };
 
@@ -56,15 +56,36 @@ Boot.prototype._createRoutes = function () {
             + path.join(self.prefix, 'hyperboot.js') + '\n'
             + path.join(self.prefix, 'hyperboot.png') + '\n'
             + path.join(self.prefix, 'hyperboot.css') + '\n'
-            + path.join(self.prefix, 'fonts/start.ttf') + '\n'
             + 'NETWORK:\n'
-            + 'versions.json\n'
+            + path.join(self.prefix, 'versions.json') + '\n'
+            + path.join(self.prefix, 'data/*') + '\n'
         );
     });
     r.addRoute('/versions.json', function (req, res, params) {
         res.setHeader('content-type', 'application/json');
         var r = fs.createReadStream(path.join(self.dir, 'versions.json'));
         r.on('error', function (err) { res.end('[]') });
+        r.pipe(res);
+    });
+    r.addRoute('/data/:hash', function (req, res, params) {
+        res.setHeader('content-type', 'text/plain; charset=UTF-8');
+        res.setHeader('cache-control', 'max-age=' + self.maxage);
+        
+        if (/[^A-Za-z0-9]/.test(params.hash)) {
+            res.statusCode = 400;
+            return res.end('invalid hash\n');
+        }
+        var r = fs.createReadStream(path.join(self.dir, params.hash + '.html'));
+        r.on('error', function (err) {
+            if (err.code === 'ENOENT') {
+                res.statusCode = 404;
+                res.end('not found\n');
+            }
+            else {
+                res.statusCode = 500;
+                res.end(err + '\n');
+            }
+        });
         r.pipe(res);
     });
     return r;
