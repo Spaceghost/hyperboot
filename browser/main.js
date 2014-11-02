@@ -46,8 +46,11 @@ function load (hash) {
     
     function show (body) {
         iframe.contentWindow.location.reload();
-        var idoc = iframe.contentWindow.document;
-        idoc.documentElement.innerHTML = '';
-        idoc.write(body);
+        iframe.addEventListener('load', function fn () {
+            iframe.removeEventListener('load', fn);
+            var idoc = iframe.contentWindow.document;
+            idoc.documentElement.innerHTML = '';
+            idoc.write(body);
+        });
     }
 }
