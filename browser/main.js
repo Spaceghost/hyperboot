@@ -1,16 +1,12 @@
 var xhr = require('xhr');
 var shasum = require('sha256');
 
-window.addEventListener('keydown', toggleView);
 var iframe = document.querySelector('#frame');
-var iwin = iframe.contentWindow;
-iwin.addEventListener('keydown', toggleView);
+var toggle = document.querySelector('#toggle-icon');
+toggle.addEventListener('click', toggleView);
 
 function toggleView (ev) {
-    if (ev.which === 119) {
-        ev.preventDefault();
-        document.querySelector('#page').classList.toggle('sideview');
-    }
+    document.querySelector('#page').classList.toggle('sideview');
 }
 
 var verdiv = document.querySelector('#versions');
