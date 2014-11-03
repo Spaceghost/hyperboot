@@ -4,7 +4,7 @@
   "bin": {
     "hyperboot": "bin/cmd.js"
   },
-  "description": "offline versioned webapp bootloader",
+  "description": "offline webapp bootloader",
   "main": "index.js",
   "dependencies": {
     "class-list": "^0.1.1",
@@ -42,6 +42,7 @@
   "keywords": [
     "offline",
     "webapp",
+    "versions",
     "boot",
     "applicationCache",
     "cache",

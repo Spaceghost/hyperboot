@@ -1,6 +1,6 @@
 # hyperboot
 
-offline versioned webapp bootloader
+offline webapp bootloader
 
 [Try the demo.](http://demo.hyperboot.org)
 
