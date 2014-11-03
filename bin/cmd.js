@@ -52,7 +52,7 @@ else if (argv._[0] === 'server') {
         var server = http.createServer(function (req, res) {
             if (argv.verbose) console.error(req.method, req.url);
             if (boot.exec(req, res)) return;
-            res.statuSCode = 404;
+            res.statusCode = 404;
             res.end('not found\n');
         });
         server.listen(argv.port, function () {
