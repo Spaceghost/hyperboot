@@ -82,6 +82,11 @@ body {
   margin-bottom: 4px;
 }
 
+#versions .version .saved {
+  display: inline-block;
+  float: right;
+}
+
 #versions .version.current {
   background-color: orange;
   border-left: 6px solid rgb(140,80,160);

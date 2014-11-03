@@ -44,6 +44,7 @@ function load (hash) {
         else {
             show(body);
             localStorage.setItem('hyperboot-data-' + hash, body);
+            versions.saved(hash);
         }
     });
     

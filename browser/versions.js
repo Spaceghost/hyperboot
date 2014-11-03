@@ -4,6 +4,7 @@ var has = require('has');
 var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
 var classList = require('class-list');
+var hyperglue = require('hyperglue');
 
 var template = require('./templates.js');
 
@@ -17,7 +18,9 @@ function Versions (root) {
     
     self.lvers = getLocalVersions();
     process.nextTick(function () {
-        self.lvers.forEach(function (v) { self.show(v) });
+        self.lvers.forEach(function (v) {
+            self.show(v);
+        });
     });
     
     self.lhashes = {};
@@ -33,7 +36,8 @@ Versions.prototype.show = function (v) {
     var elem = template.version({
         '.ver': v.version,
         '.hash': v.hash,
-        '.message': v.message
+        '.message': v.message,
+        '.saved': v.saved ? 'saved' : ''
     });
     this.elements[v.hash] = elem;
     if (this._currentHash === v.hash) this.select(v.hash);
@@ -61,6 +65,12 @@ Versions.prototype.select = function (hash) {
     }
 };
 
+Versions.prototype.saved = function (hash) {
+    hyperglue(this.elements[hash], { '.saved': 'saved' });
+    this.lhashes[hash].saved = true;
+    localStorage.setItem('hyperboot-versions', JSON.stringify(this.lvers));
+};
+
 Versions.prototype.update = function (rvers) {
     var self = this;
     var newvers = [];
@@ -82,6 +92,11 @@ Versions.prototype.update = function (rvers) {
     });
     
     this.lvers.push.apply(this.lvers, newvers);
+    for (var i = 0; i < this.lvers.length; i++) {
+        var v = this.lvers[i];
+        this.lhashes[v.hash] = v;
+        this.lnums[v.version] = v;
+    }
     localStorage.setItem('hyperboot-versions', JSON.stringify(this.lvers));
     if (newvers.length) newvers.forEach(function (v) { self.show(v) });
 };
