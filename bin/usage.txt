@@ -3,8 +3,9 @@ hyperboot release HTMLFILE { -m MESSAGE, -v VERSION }
   Create a release from HTMLFILE, a self-contained html payload.
   All of HTMLFILE's assets should be inlined.
   
-  Optionally, set a MESSAGE and VERSION for the release. These will be visible
-  to the user along with the hash of the release.
+  Set a VERSION and optionally a MESSAGE for the release.
+  These will be visible to the user along with the hash in the user
+  interface.
 
 hyperboot server { -p PORT }
 
