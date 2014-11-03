@@ -113,6 +113,7 @@ hyperboot list
 * load versions from url
 * auditing tools
 * backups, downloading, mirroring apps
+* sourcemap-powered in-browser auditing?
 
 # in closing
 
