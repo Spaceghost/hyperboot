@@ -27,11 +27,12 @@
     "xhr": "~1.17.0"
   },
   "devDependencies": {
-    "tape": "^3.0.0"
+    "tape": "^3.0.0",
+    "uglify-js": "^2.4.15"
   },
   "scripts": {
     "test": "tape test/*.js",
-    "build": "browserify browser/main.js -o static/hyperboot.js",
+    "build": "browserify browser/main.js | uglifyjs -cm > static/hyperboot.js",
     "watch": "watchify browser/main.js -o static/hyperboot.js -dv"
   },
   "repository": {
