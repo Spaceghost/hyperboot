@@ -23,7 +23,7 @@
     "routes": "~1.2.0",
     "semver": "~4.1.0",
     "through2": "~1.1.1",
-    "tiny-sha256": "~1.0.0",
+    "sha256": "~0.1.1",
     "xhr": "~1.17.0"
   },
   "devDependencies": {

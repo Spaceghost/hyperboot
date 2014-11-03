@@ -1,5 +1,5 @@
 var xhr = require('xhr');
-var shasum = require('tiny-sha256');
+var shasum = require('sha256');
 
 var iframe = document.querySelector('#frame');
 var toggle = document.querySelector('#toggle-icon');
