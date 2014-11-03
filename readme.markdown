@@ -112,6 +112,7 @@ hyperboot list
 * update mechanism for hyperboot itself
 * load versions from url
 * auditing tools
+* backups, downloading, mirroring apps
 
 # in closing
 
