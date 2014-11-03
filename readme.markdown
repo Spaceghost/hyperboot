@@ -110,6 +110,7 @@ hyperboot list
 # todo
 
 * update mechanism for hyperboot itself
+* load versions from url
 * auditing tools
 
 # in closing

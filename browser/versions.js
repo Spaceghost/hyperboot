@@ -55,6 +55,16 @@ Versions.prototype.show = function (v) {
     this.emit('version', v, elem);
 };
 
+Versions.prototype.latest = function () {
+    var max = this.lvers[0];
+    for (var i = 1; i < this.lvers.length; i++) {
+        if (semver.gt(this.lvers[i].version, max.version)) {
+            max = this.lvers[i];
+        }
+    }
+    return max;
+};
+
 Versions.prototype.select = function (hash) {
     if (this._currentElem) classList(this._currentElem).remove('current')
     var elem = this.elements[hash];

@@ -22,6 +22,11 @@ xhr('versions.json', function (err, res, body) {
     if (err) {} // ...
     if (!body || !/^2/.test(res.statusCode)) return; // ...
     versions.update(JSON.parse(body));
+    
+    if (!last) {
+        var latest = versions.latest();
+        if (latest) load(latest.hash);
+    }
 });
 
 var last = localStorage.getItem('hyberboot-current');
