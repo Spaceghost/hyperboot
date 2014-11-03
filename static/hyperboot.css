@@ -85,6 +85,8 @@ body {
 #versions .version .saved {
   display: inline-block;
   float: right;
+  font-size: 0.8em;
+  padding-right: 5px;
 }
 
 #versions .version.current {

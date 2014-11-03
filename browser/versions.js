@@ -66,8 +66,11 @@ Versions.prototype.select = function (hash) {
 };
 
 Versions.prototype.saved = function (hash) {
-    hyperglue(this.elements[hash], { '.saved': 'saved' });
     this.lhashes[hash].saved = true;
+    var elem = this.elements[hash];
+    var ix = [].indexOf.call(elem.parentNode.children, elem);
+    hyperglue(elem, { '.saved': 'saved' });
+    elem.parentNode.insertBefore(elem, elem.parentNode.children[ix]);
     localStorage.setItem('hyperboot-versions', JSON.stringify(this.lvers));
 };
 
