@@ -11,9 +11,12 @@ module.exports = function (dir, opts, cb) {
         tmpdir(), '.hyperboot-' + Date.now() + '-' + Math.random()
     );
     var jsonfile = path.join(dir, 'versions.json');
-    if (!opts.version) return process.nextTick(function () {
-        cb(new Error('version not provided'));
-    });
+    if (!opts.version) {
+        process.nextTick(function () {
+            cb(new Error('version not provided'));
+        });
+        return through();
+    }
     
     var hex, pending = 2;
     var w = fs.createWriteStream(tmpfile);

@@ -63,7 +63,7 @@ else if (argv._[0] === 'server') {
 else usage(1);
 
 function error (err) {
-    if (err) console.error(err);
+    if (err) console.error(err + '');
     process.exit(1);
 }
 
