@@ -23,16 +23,18 @@ xhr('versions.json', function (err, res, body) {
     if (!body || !/^2/.test(res.statusCode)) return; // ...
     versions.update(JSON.parse(body));
     
-    if (!last) {
+    if (!last && !current) {
         var latest = versions.latest();
         if (latest) load(latest.hash);
     }
 });
 
+var current = null;
 var last = localStorage.getItem('hyberboot-current');
 if (last) load(last);
 
 function load (hash) {
+    current = hash;
     var src = localStorage.getItem('hyperboot-data-' + hash);
     if (src && shasum(src) === hash) return show(src);
     
