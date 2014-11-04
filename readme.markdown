@@ -39,7 +39,7 @@ implementations, like seeding content on bittorrent
 # getting started
 
 For a more complete example, look at the
-[hyperboot-example-app repository](https://github.com/hyperboot-example-app).
+[hyperboot-example-app repository](https://github.com/substack/hyperboot-example-app).
 
 Otherise, to get started do:
 
