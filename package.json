@@ -1,6 +1,6 @@
 {
   "name": "hyperboot",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "bin": {
     "hyperboot": "bin/cmd.js"
   },
