@@ -33,7 +33,8 @@
   "scripts": {
     "test": "tape test/*.js",
     "build": "browserify browser/main.js | uglifyjs -cm > static/hyperboot.js",
-    "watch": "watchify browser/main.js -o static/hyperboot.js -dv"
+    "watch": "watchify browser/main.js -o static/hyperboot.js -dv",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
