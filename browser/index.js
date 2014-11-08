@@ -92,7 +92,7 @@ function semvercmp (a, b) {
         var nb = Number(pb[i]);
         if (na > nb) return -1;
         if (nb > na) return 1;
-        if (!isNan(na) && isNaN(nb))) return -1;
+        if (!isNan(na) && isNaN(nb)) return -1;
         if (isNan(na) && !isNaN(nb)) return 1;
     }
     return 0;

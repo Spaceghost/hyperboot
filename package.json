@@ -6,6 +6,7 @@
   },
   "description": "offline webapp bootloader",
   "main": "index.js",
+  "browser": "browser/index.js",
   "dependencies": {
     "class-list": "^0.1.1",
     "concat-stream": "~1.4.6",
