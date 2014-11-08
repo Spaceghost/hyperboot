@@ -36,6 +36,7 @@ Boot.prototype._createRoutes = function () {
     r.addRoute('/', function (req, res, params) {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         res.setHeader('content-type', 'text/html; charset=UTF-8');
+        res.setHeader('access-control-allow-origin', '*');
         
         var props = { '*[data-name]': self.vars.name };
         if (self.dev) props['html:first'] = { manifest: undefined };
@@ -49,6 +50,7 @@ Boot.prototype._createRoutes = function () {
     r.addRoute('/hyperboot.appcache', function (req, res, params) {
         res.setHeader('cache-control', 'max-age=' + self.maxage);
         res.setHeader('content-type', 'text/cache-manifest; charset=UTF-8');
+        res.setHeader('access-control-allow-origin', '*');
         
         res.end('CACHE MANIFEST\n'
             + path.join(self.prefix) + '\n'
@@ -63,6 +65,7 @@ Boot.prototype._createRoutes = function () {
     });
     r.addRoute('/versions.json', function (req, res, params) {
         res.setHeader('content-type', 'application/json');
+        res.setHeader('access-control-allow-origin', '*');
         var r = fs.createReadStream(path.join(self.dir, 'versions.json'));
         r.on('error', function (err) { res.end('[]') });
         r.pipe(res);
@@ -70,6 +73,7 @@ Boot.prototype._createRoutes = function () {
     r.addRoute('/data/:hash', function (req, res, params) {
         res.setHeader('content-type', 'text/html; charset=UTF-8');
         res.setHeader('cache-control', 'max-age=' + self.maxage);
+        res.setHeader('access-control-allow-origin', '*');
         
         if (/[^A-Za-z0-9]/.test(params.hash)) {
             res.statusCode = 400;
@@ -94,6 +98,7 @@ Boot.prototype._createRoutes = function () {
         r.addRoute('/' + file, function (req, res, params) {
             res.setHeader('content-type', type);
             res.setHeader('cache-control', 'max-age=' + self.maxage);
+            res.setHeader('access-control-allow-origin', '*');
             readFile(file).pipe(res);
         });
     }
