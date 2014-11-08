@@ -1,6 +1,7 @@
 var isarray = require('isarray');
 var has = require('has');
-var vercmp = require('semver-compare');
+var semvercmp = require('semver-compare');
+function vercmp (a, b) { return semvercmp(a.version, b.version) }
 
 module.exports = Boot;
 
