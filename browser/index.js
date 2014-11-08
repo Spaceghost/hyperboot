@@ -1,4 +1,6 @@
 var isarray = require('isarray');
+var has = require('has');
+var vercmp = require('semver-compare');
 
 module.exports = Boot;
 
@@ -8,10 +10,10 @@ function Boot (name, opts) {
     this.name = name;
     this.storage = opts.storage || localStorage;
     
-    this.versions = this._getLocalVersions().sort(semvercmp);
+    this.versions = this._getLocalVersions().sort(vercmp);
     this.lhashes = {};
     this.lnums = {};
-    for (var i = o; i < this.versions.length; i++) {
+    for (var i = 0; i < this.versions.length; i++) {
         var v = this.versions[i];
         this.lnums[v.version] = v;
         this.lhashes[v.hash] = v;
@@ -49,7 +51,7 @@ Boot.prototype.update = function (rvers) {
         this.lhashes[v.hash] = v;
         this.lnums[v.version] = v;
     }
-    if (newvers.length) this.versions.sort(semvercmp);
+    if (newvers.length) this.versions.sort(vercmp);
     
     this.storage.setItem(
         this._prefix('versions'),
@@ -84,16 +86,3 @@ Boot.prototype.save = function (hash, data) {
         JSON.stringify(this.versions)
     );
 };
-
-function semvercmp (a, b) {
-    var pa = a.version.split('.'), pb = b.version.split('.');
-    for (var i = 0; i < 3; i++) {
-        var na = Number(pa[i]);
-        var nb = Number(pb[i]);
-        if (na > nb) return -1;
-        if (nb > na) return 1;
-        if (!isNan(na) && isNaN(nb)) return -1;
-        if (isNan(na) && !isNaN(nb)) return 1;
-    }
-    return 0;
-}
