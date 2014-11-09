@@ -1,9 +1,13 @@
 var xhr = require('xhr');
 var shasum = require('sha256');
+var hyperboot = require('./index.js');
 
 var iframe = document.querySelector('#frame');
 var toggle = document.querySelector('#toggle-icon');
 toggle.addEventListener('click', toggleView);
+
+var appname = document.querySelector('*[data-name]').textContent;
+var boot = hyperboot(appname);
 
 function toggleView (ev) {
     document.querySelector('#page').classList.toggle('sideview');
@@ -14,14 +18,18 @@ var versions = require('./versions.js')(verdiv);
 
 versions.on('version', function (version, elem) {
     elem.addEventListener('click', function (ev) {
-        load(version.hash);
+        boot.select(version.hash);
     });
+});
+
+boot.on('update', function (newvers) {
+    // versions.update(newvers);
 });
 
 xhr('versions.json', function (err, res, body) {
     if (err) {} // ...
     if (!body || !/^2/.test(res.statusCode)) return; // ...
-    versions.update(JSON.parse(body));
+    boot.update(JSON.parse(body));
     
     if (!last && !current) {
         var latest = versions.latest();
@@ -29,12 +37,10 @@ xhr('versions.json', function (err, res, body) {
     }
 });
 
-var current = null;
-var last = localStorage.getItem('hyberboot-current');
-if (last) load(last);
+boot.on('select', onselect);
+if (boot.current) boot.select(boot.current);
 
-function load (hash) {
-    current = hash;
+function onselect (hash) {
     var src = localStorage.getItem('hyperboot-data-' + hash);
     if (src && shasum(src) === hash) return show(src);
     
@@ -51,6 +57,7 @@ function load (hash) {
         else {
             show(body);
             localStorage.setItem('hyperboot-data-' + hash, body);
+            
             versions.saved(hash);
         }
     });

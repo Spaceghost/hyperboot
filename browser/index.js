@@ -1,9 +1,13 @@
 var isarray = require('isarray');
 var has = require('has');
 var semvercmp = require('semver-compare');
+var inherits = require('inherits');
+var EventEmitter = require('events').EventEmitter;
+
 function vercmp (a, b) { return semvercmp(a.version, b.version) }
 
 module.exports = Boot;
+inherits(Boot, EventEmitter);
 
 function Boot (name, opts) {
     if (!(this instanceof Boot)) return new Boot(name, opts);
@@ -19,7 +23,7 @@ function Boot (name, opts) {
         this.lnums[v.version] = v;
         this.lhashes[v.hash] = v;
     }
-    this.current = this.storage.getItem(this._prefix + 'current');
+    this.current = this.storage.getItem(this._prefix('current'));
 }
 
 Boot.prototype._prefix = function (x) {
@@ -58,6 +62,7 @@ Boot.prototype.update = function (rvers) {
         this._prefix('versions'),
         JSON.stringify(this.versions)
     );
+    this.emit('update', newvers);
     return newvers;
 };
 
@@ -74,6 +79,7 @@ Boot.prototype._getLocalVersions = function () {
 Boot.prototype.select = function (hash) {
     this.current = hash;
     this.storage.setItem(this._prefix('current'), hash);
+    this.emit('select', hash);
 };
 
 Boot.prototype.load = function (hash) {
