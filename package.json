@@ -28,6 +28,7 @@
     "xhr": "~1.17.0"
   },
   "devDependencies": {
+    "html-inline": "^1.1.0",
     "tape": "^3.0.0",
     "uglify-js": "^2.4.15"
   },
