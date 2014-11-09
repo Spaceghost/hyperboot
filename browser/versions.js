@@ -2,6 +2,8 @@ var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
 var classList = require('class-list');
 var semcmp = require('semver-compare');
+var hyperglue = require('hyperglue');
+
 function semgt (a, b) { return semcmp(a, b) === 1 }
 
 var template = require('./templates.js');
@@ -51,4 +53,12 @@ Versions.prototype.select = function (hash) {
 Versions.prototype.update = function (newvers) {
     var self = this;
     if (newvers.length) newvers.forEach(function (v) { self.show(v) });
+};
+
+Versions.prototype.save = function (hash) {
+    var elem = this.elements[hash];
+    if (!elem) return;
+    var ix = [].indexOf.call(elem.parentNode.children, elem);
+    hyperglue(elem, { '.saved': 'saved' });
+    elem.parentNode.insertBefore(elem, elem.parentNode.children[ix]);
 };

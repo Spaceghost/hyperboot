@@ -23,17 +23,16 @@ versions.on('version', function (version, elem) {
 });
 
 versions.update(boot.versions);
-boot.on('update', function (newvers) {
-     versions.update(newvers);
-});
+boot.on('update', function (newvers) { versions.update(newvers) });
+boot.on('save', function (hash) { versions.save(hash) });
 
 xhr('versions.json', function (err, res, body) {
     if (err) {} // ...
     if (!body || !/^2/.test(res.statusCode)) return; // ...
     boot.update(JSON.parse(body));
     
-    if (!boot.current && versions.length) {
-        boot.select(boot.versions[0]);
+    if (!boot.current && boot.versions.length) {
+        boot.select(boot.versions[boot.versions.length - 1].hash);
     }
 });
 

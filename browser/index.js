@@ -93,4 +93,5 @@ Boot.prototype.save = function (hash, src) {
         this._prefix('versions'),
         JSON.stringify(this.versions)
     );
+    this.emit('save', hash);
 };
