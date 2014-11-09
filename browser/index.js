@@ -86,7 +86,8 @@ Boot.prototype.load = function (hash) {
     return this.storage.getItem(this._prefix(hash));
 };
 
-Boot.prototype.save = function (hash, data) {
+Boot.prototype.save = function (hash, src) {
+    this.storage.setItem(this._prefix(hash), src);
     this.lhashes[hash].saved = true;
     this.storage.setItem(
         this._prefix('versions'),

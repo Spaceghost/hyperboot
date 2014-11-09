@@ -22,8 +22,9 @@ versions.on('version', function (version, elem) {
     });
 });
 
+versions.update(boot.versions);
 boot.on('update', function (newvers) {
-    // versions.update(newvers);
+     versions.update(newvers);
 });
 
 xhr('versions.json', function (err, res, body) {
@@ -31,9 +32,8 @@ xhr('versions.json', function (err, res, body) {
     if (!body || !/^2/.test(res.statusCode)) return; // ...
     boot.update(JSON.parse(body));
     
-    if (!last && !current) {
-        var latest = versions.latest();
-        if (latest) load(latest.hash);
+    if (!boot.current && versions.length) {
+        boot.select(boot.versions[0]);
     }
 });
 
@@ -41,7 +41,7 @@ boot.on('select', onselect);
 if (boot.current) boot.select(boot.current);
 
 function onselect (hash) {
-    var src = localStorage.getItem('hyperboot-data-' + hash);
+    var src = boot.load(hash);
     if (src && shasum(src) === hash) return show(src);
     
     xhr('data/' + hash, function (err, res, body) {
@@ -56,15 +56,12 @@ function onselect (hash) {
         }
         else {
             show(body);
-            localStorage.setItem('hyperboot-data-' + hash, body);
-            
-            versions.saved(hash);
+            boot.save(hash, body);
         }
     });
     
     function show (body) {
         versions.select(hash);
-        localStorage.setItem('hyberboot-current', hash);
         
         iframe.contentWindow.location.reload();
         iframe.addEventListener('load', function fn () {
