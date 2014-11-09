@@ -35,7 +35,8 @@
     "test": "tape test/*.js",
     "build": "browserify browser/main.js | uglifyjs -cm > static/hyperboot.js",
     "watch": "watchify browser/main.js -o static/hyperboot.js -dv",
-    "prepublish": "npm run build"
+    "inline": "html-inline static/site.html > static/index.html",
+    "prepublish": "npm run build && npm run inline"
   },
   "repository": {
     "type": "git",
