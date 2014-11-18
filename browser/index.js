@@ -27,7 +27,7 @@ function Boot (name, opts) {
 }
 
 Boot.prototype._prefix = function (x) {
-    return 'hyperboot!' + name + '!' + x;
+    return 'hyperboot!' + this.name + '!' + x;
 };
 
 Boot.prototype.update = function (rvers) {
