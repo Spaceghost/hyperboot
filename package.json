@@ -34,8 +34,8 @@
   },
   "scripts": {
     "test": "tape test/*.js",
-    "build": "browserify browser/main.js | uglifyjs -cm > static/hyperboot.js",
-    "watch": "watchify browser/main.js -o static/hyperboot.js -dv",
+    "build": "browserify browser/preboot.js | uglifyjs -cm > static/hyperboot.js",
+    "watch": "watchify browser/preboot.js -o static/hyperboot.js -dv",
     "inline": "html-inline static/site.html > static/index.html",
     "prepublish": "npm run build && npm run inline"
   },
