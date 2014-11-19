@@ -29,13 +29,15 @@
   },
   "devDependencies": {
     "html-inline": "^1.1.0",
+    "onchange": "~0.0.1",
     "tape": "^3.0.0",
     "uglify-js": "^2.4.15"
   },
   "scripts": {
     "test": "tape test/*.js",
     "build": "browserify browser/preboot.js | uglifyjs -cm > static/hyperboot.js",
-    "watch": "watchify browser/preboot.js -o static/hyperboot.js -dv",
+    "watch-js": "watchify browser/preboot.js -o static/hyperboot.js -dv",
+    "watch": "npm run watch-js & onchange static/hyperboot.js -- npm run inline",
     "inline": "html-inline static/site.html > static/index.html",
     "prepublish": "npm run build && npm run inline"
   },
