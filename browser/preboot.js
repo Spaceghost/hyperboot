@@ -22,5 +22,5 @@ if (boothash) {
 else backup();
 
 function backup () {
-    require('./main.js')();
+    require('./main.js');
 }
