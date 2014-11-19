@@ -1,7 +1,7 @@
-hyperboot release HTMLFILE { -m MESSAGE, -v VERSION }
+hyperboot release HTMLFILE { -n NAME, -m MESSAGE, -v VERSION }
 
-  Create a release from HTMLFILE, a self-contained html payload.
-  All of HTMLFILE's assets should be inlined.
+  Create a release for an application called NAME from HTMLFILE, a
+  self-contained html payload. All of HTMLFILE's assets should be inlined.
   
   Set a VERSION and optionally a MESSAGE for the release.
   These will be visible to the user along with the hash in the user

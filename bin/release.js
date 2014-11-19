@@ -12,12 +12,8 @@ module.exports = function (dir, opts, cb) {
     );
     var jsonfile = path.join(dir, 'versions.json');
     var input = through();
-    if (!opts.version) {
-        process.nextTick(function () {
-            cb(new Error('version not provided'));
-        });
-        return input;
-    }
+    if (!opts.version) return errnext('version not provided');
+    if (!opts.name) return errnext('name not provided');
 
     var versions, hex;
     fs.readFile(jsonfile, function (err, body) {
@@ -70,5 +66,12 @@ module.exports = function (dir, opts, cb) {
             if (err) cb(err)
             else cb(null, hex)
         });
+    }
+    
+    function errnext (msg) {
+        process.nextTick(function () {
+            cb(new Error('version not provided'));
+        });
+        return input;
     }
 };
