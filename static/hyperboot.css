@@ -36,34 +36,6 @@ body {
   width: 450px;
 }
 
-#toggle-icon {
-  position: absolute;
-  top: 5px;
-  right: 0px;
-  width: 32px;
-  text-align: center;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-#toggle-icon img {
-  width: 24px;
-  height: 24px;
-  opacity: 0.3;
-}
-
-#page.sideview #toggle-icon img {
-  opacity: 0.8;
-}
-
-#toggle-icon img:hover {
-  opacity: 1.0;
-}
-
-#page.sideview #toggle-icon img:hover {
-  opacity: 1.0;
-}
-
 #versions {
   position: absolute;
   top: 50px;
