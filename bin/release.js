@@ -13,8 +13,7 @@ module.exports = function (dir, opts, cb) {
     var jsonfile = path.join(dir, 'versions.json');
     var input = through();
     if (!opts.version) return errnext('version not provided');
-    if (!opts.name) return errnext('name not provided');
-
+    
     var versions, hex;
     fs.readFile(jsonfile, function (err, body) {
         if (err && err.code === 'ENOENT') body = Buffer('[]');
