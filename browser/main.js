@@ -34,13 +34,24 @@ xhr('versions.json', function (err, res, body) {
 
 boot.on('select', onselect);
 
-if (location.hash === '#v') {
-    ui.show();
-}
-else if (/^#h=[0-9a-f]{32,}$/.test(location.hash)) {
-    boot.select(location.hash.replace(/^#h=/, ''));
-}
+window.addEventListener('hashchange', checkhashes);
+
+if (checkhashes()) {}
 else if (boot.current) boot.select(boot.current);
+
+function checkhashes (ev) {
+    if (location.hash === '#v') {
+        ui.show();
+        return true;
+    }
+    ui.hide();
+    
+    if (/^#h=[0-9a-f]{32,}$/.test(location.hash)) {
+        boot.select(location.hash.replace(/^#h=/, ''));
+        return true;
+    }
+    return false;
+}
 
 function onselect (hash) {
     if (boot.has(hash)) return ui.select(hash);
