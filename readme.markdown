@@ -107,6 +107,13 @@ hyperboot list
 
 ```
 
+# url control
+
+You can drive some behaviors in hyperboot by adding a hash to the url.
+
+* `/#v` - show the version list only without loading a version at startup
+* `/#h=HASH` - load a version by its hash
+
 # todo
 
 * update mechanism for hyperboot itself
