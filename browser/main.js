@@ -12,7 +12,8 @@ var boot = hyperboot(appname);
 var ui = UI(boot, {
     iframe: '#frame',
     versions: '#versions',
-    page: '#page'
+    page: '#page',
+    sidebar: '#sidebar'
 });
 
 window.boot = boot;

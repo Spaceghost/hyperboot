@@ -10,9 +10,9 @@ function UI (boot, elements) {
     this.elements = {
         iframe: getElem(elements.iframe),
         versions: getElem(elements.versions),
-        page: getElem(elements.page)
+        page: getElem(elements.page),
+        sidebar: getElem(elements.sidebar)
     };
-    
     this.versions = Versions(this.elements.versions);
     this.versions.on('version', function (version, elem) {
         elem.addEventListener('click', function (ev) {
@@ -25,6 +25,11 @@ function UI (boot, elements) {
     });
     this.boot.on('save', function (hash) {
         self.versions.save(hash);
+    });
+    
+    var close = this.elements.sidebar.querySelector('.close');
+    close.addEventListener('click', function () {
+        self.hide();
     });
 }
 

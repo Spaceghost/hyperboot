@@ -12,6 +12,7 @@ inherits(Versions, EventEmitter);
 module.exports = Versions;
 
 function Versions (root) {
+    var self = this;
     if (!(this instanceof Versions)) return new Versions(root);
     this.root = root;
     this.elements = {};

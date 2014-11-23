@@ -31,6 +31,23 @@ body {
   margin-top: 5px;
 }
 
+#sidebar .close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 20px;
+  width: 30px;
+  padding: 9px;
+  color: rgb(210,165,240);
+  background-color: rgb(80,20,120);
+  text-align: center;
+}
+
+#sidebar .close:hover {
+  cursor: pointer;
+  background-color: rgb(140,80,160);
+}
+
 #page.sideview #sidebar {
   display: block;
   width: 450px;
