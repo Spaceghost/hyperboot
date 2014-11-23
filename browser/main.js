@@ -3,6 +3,7 @@ console.log('// available globals: boot, ui');
 
 var xhr = require('xhr');
 var shasum = require('sha256');
+var RPC = require('frame-rpc');
 var hyperboot = require('./index.js');
 var UI = require('./ui.js');
 
@@ -14,6 +15,19 @@ var ui = UI(boot, {
     versions: '#versions',
     page: '#page',
     sidebar: '#sidebar'
+});
+
+var origin = location.protocol + '//' + location.host;
+var rpc = RPC(window, ui.elements.iframe, origin, {
+    show: function () { ui.show() },
+    hide: function () { ui.hide() },
+    toggle: function () { ui.toggle() },
+    versions: function (cb) {
+        cb({
+            current: boot.current,
+            available: boot.versions
+        });
+    }
 });
 
 window.boot = boot;

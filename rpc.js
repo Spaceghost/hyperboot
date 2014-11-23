@@ -1,5 +1,5 @@
 var RPC = require('frame-rpc');
-var rpc = RPC(window, window.parent, document.referrer);
+var rpc = RPC(window, window.parent, '*');
 
 exports.rpc = rpc;
 
