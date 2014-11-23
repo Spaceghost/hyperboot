@@ -23,7 +23,10 @@ xhr('versions.json', function (err, res, body) {
     if (!body || !/^2/.test(res.statusCode)) return; // ...
     boot.update(JSON.parse(body));
     
-    if (!boot.current && boot.versions.length
+    if (!boot.current && /^#h[0-9a-f]{32,}$/.test(location.hash)) {
+        boot.select(location.hash.replace(/^#h/, ''));
+    }
+    else if (!boot.current && boot.versions.length
     && location.hash !== '#v') {
         boot.select(boot.versions[boot.versions.length - 1].hash);
     }
@@ -33,6 +36,9 @@ boot.on('select', onselect);
 
 if (location.hash === '#v') {
     ui.show();
+}
+else if (/^#h[0-9a-f]{32,}$/.test(location.hash)) {
+    boot.select(location.hash.replace(/^#h/, ''));
 }
 else if (boot.current) boot.select(boot.current);
 
