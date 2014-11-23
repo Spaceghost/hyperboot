@@ -8,7 +8,7 @@
   "main": "index.js",
   "browser": "browser/index.js",
   "dependencies": {
-    "class-list": "^0.1.1",
+    "class-list": "~0.1.1",
     "concat-stream": "~1.4.6",
     "defined": "~0.0.0",
     "frame-rpc": "^1.0.0",

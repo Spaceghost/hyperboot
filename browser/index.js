@@ -1,6 +1,7 @@
 var isarray = require('isarray');
 var has = require('has');
 var semvercmp = require('semver-compare');
+var shasum = require('sha256');
 var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
 
@@ -83,7 +84,12 @@ Boot.prototype.select = function (hash) {
 };
 
 Boot.prototype.load = function (hash) {
-    return this.storage.getItem(this._prefix(hash));
+    var src = this.storage.getItem(this._prefix(hash));
+    if (src && shasum(src) === hash) return src;
+};
+
+Boot.prototype.has = function (hash) {
+    return has(this.storage, this._prefix(hash));
 };
 
 Boot.prototype.save = function (hash, src) {
