@@ -3,15 +3,9 @@ var shasum = require('sha256');
 var hyperboot = require('./index.js');
 
 var iframe = document.querySelector('#frame');
-var toggle = document.querySelector('#toggle-icon');
-toggle.addEventListener('click', toggleView);
 
 var appname = document.querySelector('*[data-name]').textContent;
 var boot = hyperboot(appname);
-
-function toggleView (ev) {
-    document.querySelector('#page').classList.toggle('sideview');
-}
 
 var verdiv = document.querySelector('#versions');
 var versions = require('./versions.js')(verdiv);
