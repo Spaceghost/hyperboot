@@ -123,6 +123,47 @@ You can drive some behaviors in hyperboot by adding a hash to the url.
 * `/#v` - show the version list only without loading a version at startup
 * `/#h=HASH` - load a version by its hash
 
+# rpc methods
+
+Applications can interface with the bootloader to a limited degree over
+a postMessage bus. Just load the `hyperboot/rpc` module from your browser
+application:
+
+```
+var rpc = require('hyperboot/rpc')
+```
+
+## rpc.show()
+
+Show the configuration UI.
+
+## rpc.hide()
+
+Hide the configuration UI.
+
+## rpc.toggle()
+
+Toggle the configuration UI's visibility.
+
+## rpc.versions(cb)
+
+Request the current and available versions.
+`cb(res)` fires with the response `res`:
+
+```
+{
+  current: 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
+  versions: [
+    {
+      hash: 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
+      version: '1.2.3',
+      message: 'whatever...'
+    },
+    // and more...
+  ]
+}
+```
+
 # todo
 
 * update mechanism for hyperboot itself
