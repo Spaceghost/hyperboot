@@ -41,6 +41,15 @@ else if (argv._[0] === 'release') {
         }));
     });
 }
+else if (argv._[0] === 'unrelease') {
+    withDir(function (dir) {
+        mkdirp.sync(dir);
+        var unrelease = require('./unrelease.js');
+        unrelease(dir, defined(argv.hash, argv._[1]), function (err) {
+            if (err) console.error(err);
+        });
+    });
+}
 else if (argv._[0] === 'server') {
     var http = require('http');
     withDir(function (dir) {

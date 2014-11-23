@@ -88,14 +88,23 @@ same!
 # usage
 
 ```
-hyperboot release HTMLFILE { -m MESSAGE, -v VERSION }
+hyperboot release HTMLFILE { -n NAME, -m MESSAGE, -v VERSION }
 
-  Create a release from HTMLFILE, a self-contained html payload.
-  All of HTMLFILE's assets should be inlined.
+  Create a release for an application called NAME from HTMLFILE, a
+  self-contained html payload. All of HTMLFILE's assets should be inlined.
   
   Set a VERSION and optionally a MESSAGE for the release.
   These will be visible to the user along with the hash in the user
   interface.
+  
+  On success, prints the HASH of this release to stdout.
+
+hyperboot unrelease HASH
+
+  Remove a release. Note: clients will still keep all releases they have ever
+  downloaded. Use this feature for local debugging only or to save disk space.
+
+  This feature will not unpublish. There is no way to really unpublish.
 
 hyperboot server { -p PORT }
 

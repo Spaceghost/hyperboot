@@ -69,9 +69,7 @@ module.exports = function (dir, opts, cb) {
     }
     
     function errnext (msg) {
-        process.nextTick(function () {
-            cb(new Error('version not provided'));
-        });
+        process.nextTick(function () { cb(new Error(msg)) });
         return input;
     }
 };
