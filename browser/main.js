@@ -1,5 +1,5 @@
 console.log('// welcome to hyperboot!');
-console.log('// available globals: `boot`, `ui`');
+console.log('// available globals: boot, ui');
 
 var xhr = require('xhr');
 var shasum = require('sha256');
@@ -23,13 +23,18 @@ xhr('versions.json', function (err, res, body) {
     if (!body || !/^2/.test(res.statusCode)) return; // ...
     boot.update(JSON.parse(body));
     
-    if (!boot.current && boot.versions.length) {
+    if (!boot.current && boot.versions.length
+    && location.hash !== '#v') {
         boot.select(boot.versions[boot.versions.length - 1].hash);
     }
 });
 
 boot.on('select', onselect);
-if (boot.current) boot.select(boot.current);
+
+if (location.hash === '#v') {
+    ui.show();
+}
+else if (boot.current) boot.select(boot.current);
 
 function onselect (hash) {
     if (boot.has(hash)) return ui.select(hash);
