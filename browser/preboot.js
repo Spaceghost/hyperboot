@@ -8,7 +8,9 @@ if (/^#b=/.test(location.hash)) {
 else {
     boothash = localStorage.getItem('hyperboot!' + appname + '!boot');
 }
-if (boothash) {
+if (!window.BOOTED && boothash) {
+    window.BOOTED = true;
+    
     var bootsrc = localStorage.getItem('hyperboot!' + appname + '!' + boothash);
     if (!bootsrc) {
         console.error('BOOTLOADER VERSION NOT FOUND: ' + boothash);

@@ -37,13 +37,13 @@ xhr('versions.json', function (err, res, body) {
     if (err) {} // ...
     if (!body || !/^2/.test(res.statusCode)) return; // ...
     boot.update(JSON.parse(body));
+    var appvers = boot.versions.filter(function (v) { return !v.boot });
     
     if (!boot.current && /^#h=[0-9a-f]{32,}$/.test(location.hash)) {
         boot.select(location.hash.replace(/^#h=/, ''));
     }
-    else if (!boot.current && boot.versions.length
-    && location.hash !== '#v') {
-        boot.select(boot.versions[boot.versions.length - 1].hash);
+    else if (!boot.current && appvers.length && location.hash !== '#v') {
+        boot.select(appvers[appvers.length - 1].hash);
     }
 });
 
