@@ -39,12 +39,12 @@ body {
   width: 30px;
   height: 30px;
   padding: 6px;
-  padding-top: 5px;
-  color: rgb(210,165,240);
+  padding-top: 4px;
+  color: rgb(80,20,120);
   background-color: orange;
   text-align: center;
   border-radius: 3px;
-  border-width: 0px;
+  border: 1px solid rgb(80,20,120);
 }
 
 #sidebar .close:hover {
