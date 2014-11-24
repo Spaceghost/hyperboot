@@ -8,7 +8,9 @@ var RPC = require('frame-rpc');
 var hyperboot = require('./index.js');
 var UI = require('./ui.js');
 
-var appname = document.querySelector('*[data-name]').textContent;
+var appname = window.APPNAME
+    || document.querySelector('*[data-name]').textContent
+;
 var boot = hyperboot(appname);
 
 var ui = UI(boot, {
