@@ -16,7 +16,11 @@ function UI (boot, elements) {
     this.versions = Versions(this.elements.versions);
     this.versions.on('version', function (version, elem) {
         elem.addEventListener('click', function (ev) {
-            self.boot.select(version.hash);
+            if (version.boot) {
+                self.boot.selectLoader(version.hash);
+                location.reload();
+            }
+            else self.boot.select(version.hash);
         });
     });
     this.versions.update(this.boot.versions);

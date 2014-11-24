@@ -15,29 +15,34 @@ function Versions (root) {
     var self = this;
     if (!(this instanceof Versions)) return new Versions(root);
     this.root = root;
+    this.approot = root.querySelector('.app-versions');
+    this.bootroot = root.querySelector('.boot-versions');
     this.elements = {};
 }
 
 Versions.prototype.show = function (v) {
-    var elem = template.version({
+    var tm = v.boot ? template['boot-version'] : template['app-version'];
+    var elem = tm({
         '.ver': v.version,
         '.hash': v.hash,
-        '.message': v.message,
+        '.message': v.message || '',
         '.saved': v.saved ? 'saved' : ''
     });
     this.elements[v.hash] = elem;
     if (this._currentHash === v.hash) this.select(v.hash);
     
-    for (var i = 1; i < this.root.children.length; i++) {
-        var c = this.root.children[i];
+    var root = v.boot ? this.bootroot : this.approot;
+    
+    for (var i = 1; i < root.children.length; i++) {
+        var c = root.children[i];
         var cver = c.querySelector('.ver').textContent;
         if (semgt(v.version, cver)) {
-            this.root.insertBefore(elem, c);
+            root.insertBefore(elem, c);
             this.emit('version', v, elem);
             return;
         }
     }
-    this.root.appendChild(elem);
+    root.appendChild(elem);
     this.emit('version', v, elem);
 };
 

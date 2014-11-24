@@ -75,6 +75,16 @@ body {
   margin-bottom: 4px;
 }
 
+#versions .version.boot {
+  color: rgb(210,165,240);
+  background-color: rgb(80,20,120);
+  padding-left: 15px;
+}
+
+#versions .version.boot.current {
+  background-color: rgb(210,250,210);
+}
+
 #versions .version .saved {
   display: inline-block;
   float: right;

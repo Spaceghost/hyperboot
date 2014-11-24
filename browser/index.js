@@ -83,6 +83,10 @@ Boot.prototype.select = function (hash) {
     this.emit('select', hash);
 };
 
+Boot.prototype.selectLoader = function (hash) {
+    localStorage.setItem(this._prefix('boot'), hash);
+};
+
 Boot.prototype.load = function (hash) {
     var src = this.storage.getItem(this._prefix(hash));
     if (src && shasum(src) === hash) return src;

@@ -37,7 +37,7 @@
   "scripts": {
     "test": "tape test/*.js",
     "build": "browserify browser/preboot.js | uglifyjs -cm > static/hyperboot.js",
-    "watch-js": "watchify browser/preboot.js -o static/hyperboot.js -dv",
+    "watch-js": "watchify browser/preboot.js -o static/hyperboot.js -v",
     "watch": "npm run watch-js & onchange static/hyperboot.js static/hyperboot.css static/site.html -- npm run inline",
     "inline": "html-inline static/site.html > static/index.html",
     "prepublish": "npm run build && npm run inline"
