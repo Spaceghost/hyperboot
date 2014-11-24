@@ -1,5 +1,6 @@
-console.log('// welcome to hyperboot!');
-console.log('// available globals: boot, ui');
+console.log('// Welcome to hyperboot!');
+console.log('// Available globals: boot, ui');
+console.log('// Try this here in the REPL: ui.toggle()')
 
 var xhr = require('xhr');
 var shasum = require('sha256');
