@@ -25,6 +25,7 @@ function Boot (name, opts) {
         this.lhashes[v.hash] = v;
     }
     this.current = this.storage.getItem(this._prefix('current'));
+    this.loader = this.storage.getItem(this._prefix('boot'));
 }
 
 Boot.prototype._prefix = function (x) {
@@ -84,7 +85,9 @@ Boot.prototype.select = function (hash) {
 };
 
 Boot.prototype.selectLoader = function (hash) {
+    this.loader = hash;
     localStorage.setItem(this._prefix('boot'), hash);
+    this.emit('loader', hash);
 };
 
 Boot.prototype.load = function (hash) {

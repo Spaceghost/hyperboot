@@ -30,6 +30,7 @@ Versions.prototype.show = function (v) {
     });
     this.elements[v.hash] = elem;
     if (this._currentHash === v.hash) this.select(v.hash);
+    if (this._loaderHash === v.hash) this.selectLoader(v.hash);
     
     var root = v.boot ? this.bootroot : this.approot;
     
@@ -52,6 +53,16 @@ Versions.prototype.select = function (hash) {
     this._currentHash = hash;
     if (elem) {
         this._currentElem = elem;
+        classList(elem).add('current');
+    }
+};
+
+Versions.prototype.selectLoader = function (hash) {
+    if (this._loaderElem) classList(this._loaderElem).remove('current')
+    var elem = this.elements[hash];
+    this._loaderHash = hash;
+    if (elem) {
+        this._loaderElem = elem;
         classList(elem).add('current');
     }
 };

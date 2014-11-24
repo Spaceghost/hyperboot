@@ -47,7 +47,15 @@ xhr('versions.json', function (err, res, body) {
     }
 });
 
-boot.on('select', onselect);
+boot.on('select', function (hash) {
+    onselect(hash, function () { ui.select(hash) });
+});
+
+boot.on('loader', function (hash) {
+    onselect(hash, function () {
+        location.reload();
+    });
+});
 
 window.addEventListener('hashchange', checkhashes);
 
@@ -68,8 +76,8 @@ function checkhashes (ev) {
     return false;
 }
 
-function onselect (hash) {
-    if (boot.has(hash)) return ui.select(hash);
+function onselect (hash, cb) {
+    if (boot.has(hash)) return cb();
     
     xhr('data/' + hash, function (err, res, body) {
         if (err) {
@@ -83,7 +91,7 @@ function onselect (hash) {
         }
         else {
             boot.save(hash, body);
-            ui.select(hash);
+            cb();
         }
     });
 }

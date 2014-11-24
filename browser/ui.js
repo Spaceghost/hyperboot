@@ -18,7 +18,6 @@ function UI (boot, elements) {
         elem.addEventListener('click', function (ev) {
             if (version.boot) {
                 self.boot.selectLoader(version.hash);
-                location.reload();
             }
             else self.boot.select(version.hash);
         });
@@ -30,6 +29,7 @@ function UI (boot, elements) {
     this.boot.on('save', function (hash) {
         self.versions.save(hash);
     });
+    if (boot.loader) this.versions.selectLoader(boot.loader);
     
     var close = this.elements.sidebar.querySelector('.close');
     close.addEventListener('click', function () {
@@ -49,6 +49,11 @@ UI.prototype.select = function (hash) {
         idoc.documentElement.innerHTML = '';
         idoc.write(src);
     });
+};
+
+UI.prototype.selectLoader = function (hash) {
+    this.boot.selectLoader(hash);
+    this.versions.selectLoader(hash);
 };
 
 UI.prototype.toggle = function () {
