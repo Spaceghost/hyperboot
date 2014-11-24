@@ -24,6 +24,10 @@ var argv = minimist(process.argv.slice(2), {
     }
 });
 
+if (process.argv.length === 3 && argv.version) {
+    return console.log(require('../package.json').version);
+}
+
 if (argv._[0] === 'help' || argv.help || argv.h) {
     usage(0);
 }
