@@ -1,5 +1,9 @@
-var nameElem = document.querySelector('*[data-name]');
-var appname = nameElem && nameElem.textContent;
+var appname = window.APPNAME;
+if (!appname) {
+    var nameElem = document.querySelector('*[data-name]');
+    appname = nameElem && nameElem.textContent;
+    window.APPNAME = appName;
+}
 
 var boothash;
 if (/^#b=/.test(location.hash)) {
