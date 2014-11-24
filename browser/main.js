@@ -1,4 +1,4 @@
-console.log('// Welcome to hyperboot!');
+console.log('// WELCOME TO HYPERBOOT!');
 console.log('// Available globals: boot, ui');
 console.log('// Try this here in the REPL: ui.toggle()')
 
