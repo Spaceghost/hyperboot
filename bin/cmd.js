@@ -46,7 +46,17 @@ else if (argv._[0] === 'unrelease') {
         mkdirp.sync(dir);
         var unrelease = require('./unrelease.js');
         unrelease(dir, defined(argv.hash, argv._[1]), function (err) {
-            if (err) console.error(err);
+            if (err) error(err);
+        });
+    });
+}
+else if (argv._[0] === 'upgrade') {
+    withDir(function (dir) {
+        mkdirp.sync(dir);
+        var upgrade = require('./upgrade.js');
+        upgrade(dir, function (err, hash) {
+            if (err) error(err)
+            else console.log(hash)
         });
     });
 }

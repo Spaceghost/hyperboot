@@ -6,15 +6,15 @@ var concat = require('concat-stream');
 var through = require('through2');
 var tmpdir = require('osenv').tmpdir;
 
-var upgrade = require('./upgrade.js');
+var VERSION = require('../package.json').version;
+var htmlfile = path.join(__dirname, '../static/index.html');
 
-module.exports = function (dir, opts, cb) {
+module.exports = function (dir, cb) {
     var tmpfile = path.join(
         tmpdir(), '.hyperboot-' + Date.now() + '-' + Math.random()
     );
     var jsonfile = path.join(dir, 'versions.json');
-    var input = through();
-    if (!opts.version) return errnext('version not provided');
+    var input = fs.createReadStream(htmlfile);
     
     var versions, hex;
     fs.readFile(jsonfile, function (err, body) {
@@ -25,11 +25,11 @@ module.exports = function (dir, opts, cb) {
         catch (err) { return cb(err) }
         
         var versionExists = versions.some(function (ref) {
-            return ref.version === opts.version;
+            return ref.boot && ref.version === VERSION;
         });
         if (versionExists) {
             return cb(new Error(
-                'cannot modify pre-existing version: ' + opts.version
+                'cannot modify pre-existing version: ' + VERSION
             ));
         }
         
@@ -46,8 +46,6 @@ module.exports = function (dir, opts, cb) {
         input.pipe(h);
     });
     
-    return input;
-    
     function done () {
         var dstfile = path.join(dir, hex + '.html');
         fs.rename(tmpfile, dstfile, function (err) {
@@ -57,30 +55,16 @@ module.exports = function (dir, opts, cb) {
     }
     
     function updateJson () {
-        var ref = { hash: hex };
-        if (opts.version) ref.version = opts.version;
-        if (opts.message) ref.message = opts.message;
-        
+        var ref = {
+            boot: true,
+            hash: hex,
+            version: VERSION
+        };
         versions.push(ref);
-        var bootExists = versions.some(function (v) { return v.boot });
-        
         var src = JSON.stringify(versions, null, 2) + '\n';
         fs.writeFile(jsonfile, src, function (err) {
             if (err) cb(err)
-            else if (!bootExists) postAddBoot(hex)
             else cb(null, hex)
         });
-    }
-    
-    function postAddBoot (hex) {
-        upgrade(dir, function (err, boothex) {
-            if (err) error(err)
-            else cb(null, hex)
-        });
-    }
-    
-    function errnext (msg) {
-        process.nextTick(function () { cb(new Error(msg)) });
-        return input;
     }
 };
