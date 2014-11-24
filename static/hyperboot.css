@@ -79,10 +79,13 @@ body {
   color: rgb(210,165,240);
   background-color: rgb(80,20,120);
   padding-left: 15px;
+  border-left: 6px solid transparent;
 }
 
 #versions .version.boot.current {
-  background-color: rgb(210,250,210);
+  color: rgb(210,165,240);
+  background-color: rgb(140,20,180);
+  border-left: 6px solid orange;
 }
 
 #versions .version .saved {
