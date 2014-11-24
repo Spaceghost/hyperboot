@@ -2,7 +2,7 @@ var appname = window.APPNAME;
 if (!appname) {
     var nameElem = document.querySelector('*[data-name]');
     appname = nameElem && nameElem.textContent;
-    window.APPNAME = appName;
+    window.APPNAME = appname;
 }
 
 var boothash;
