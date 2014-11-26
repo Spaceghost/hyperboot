@@ -123,6 +123,11 @@ You can drive some behaviors in hyperboot by adding a hash to the url.
 * `/#v` - show the version list only without loading a version at startup
 * `/#h=HASH` - load a version by its hash
 
+# postMessage forwarding
+
+In addition to exposing an RPC channel described below, the application will
+also forward external postMessage events to the currently running applicaiton.
+
 # rpc methods
 
 Applications can interface with the bootloader to a limited degree over
