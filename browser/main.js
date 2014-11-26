@@ -21,7 +21,7 @@ var ui = UI(boot, {
 });
 
 var origin = location.protocol + '//' + location.host;
-var rpc = RPC(window, ui.elements.iframe, origin, {
+var rpc = RPC(window, ui.elements.iframe.contentWindow, origin, {
     show: function () { ui.show() },
     hide: function () { ui.hide() },
     toggle: function () { ui.toggle() },
@@ -31,6 +31,10 @@ var rpc = RPC(window, ui.elements.iframe, origin, {
             available: boot.versions
         });
     }
+});
+
+window.addEventListener('message', function (ev) {
+    ui.elements.iframe.contentWindow.postMessage(ev.data, '*');
 });
 
 window.boot = boot;
