@@ -85,6 +85,9 @@ Click the icon in the upper right corner to see the application releases.
 Refresh the page, kill the server, and note how the app keeps working just the
 same!
 
+You can even upgrade hyperboot itself and select among different hyperboot
+versions.
+
 # usage
 
 ```
