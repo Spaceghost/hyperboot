@@ -105,6 +105,14 @@ hyperboot unrelease HASH
   downloaded. Use this feature for local debugging only or to save disk space.
 
   This feature will not unpublish. There is no way to really unpublish.
+  If you unrelease a build, clients will refuse to load anything else that has
+  the same version of the removed build, so you must increment the version
+  number.
+
+hyperboot upgrade
+
+  Make the current version of the hyperboot bootloader available to clients,
+  if they choose to use it.
 
 hyperboot server { -p PORT }
 
@@ -171,7 +179,6 @@ Request the current and available versions.
 
 # todo
 
-* update mechanism for hyperboot itself
 * load versions from url
 * auditing tools
 * backups, downloading, mirroring apps
