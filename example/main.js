@@ -8,6 +8,7 @@ boot.versions(function (err, versions) {
 var elems = {
   versions: document.querySelector('#versions'),
   version: document.querySelector('[template=version]'),
+  versionBox: document.querySelector('.versions-outer'),
   form: document.querySelector('form#load')
 }
 elems.form.addEventListener('submit', function (ev) {
@@ -18,9 +19,11 @@ elems.form.addEventListener('submit', function (ev) {
 })
 
 function addVersion (v) {
-  var elem = elems.version.cloneNode()
+  var elem = elems.version.cloneNode(true)
   elem.removeAttribute('template')
-  var link = elem.querySelector('[data-key]')
-  link.setAttribute('href', '/version/' + v.version)
+  var link = elem.querySelector('*[data-key]')
+  link.setAttribute('href', v.hrefs[0])
+  link.textContent = v.version
   elems.versions.appendChild(elem)
+  elems.versionBox.classList.remove('hide')
 }
