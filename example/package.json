@@ -2,5 +2,8 @@
   "scripts": {
     "build": "browserify main.js -o bundle.js",
     "watch": "watchify main.js -o bundle.js -dv"
+  },
+  "dependencies": {
+    "semver": "^5.0.3"
   }
 }

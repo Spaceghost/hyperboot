@@ -8,9 +8,9 @@
   "main": "index.js",
   "browser": "browser/index.js",
   "dependencies": {
+    "semver": "^5.0.3"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git://github.com/substack/hyperboot.git"
