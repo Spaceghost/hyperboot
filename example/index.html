@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      *[template] {
+        display: none;
+      }
+      .hide {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>hyperboot example</h1>
+    <form id="load">
+      <input type="text" name="url" placeholder="app url">
+      <button type="submit">load</button>
+    </form>
+    <div class="versions-outer hide">
+      <h3>versions</h3>
+      <div id="versions">
+        <div template="version" class="version">
+          <a data-key="version"></a>
+        </div>
+      </div>
+    </div>
+    <script src="bundle.js"></script>
+  </body>
+</html>
