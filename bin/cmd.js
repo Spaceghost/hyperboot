@@ -12,40 +12,62 @@ if (argv._[0] === 'init') {
   fs.createReadStream(path.join(__dirname, 'init.html'))
     .pipe(process.stdout)
 } else if (argv._[0] === 'release') {
-  var src, pending = 2;
-  fs.readFile(argv._[1], function (err, src_) {
-    if (err) return exit(err)
-    src = src_
-    ready()
-  })
+  var refs = {}, pending = 3
+  var file = argv._[1]
+
   mkdirp('.hyperboot', function (err) {
     if (err) return exit(err)
-    else ready()
-  })
-  function ready () {
-    if (--pending !== 0) return
-    var loc = []
-    fs.readFile('.hyperboot/latest.html', function (err, prev) {
-      var newsrc
-      if (err && err.code === 'ENOENT') {
-        newsrc = hver.update(src, [], hver.meta(src))
-      }
-      else if (err) return exit(err)
-      else {
-        info = hver.parse(prev)
-        var prevhash = createHash('sha512').update(prev).digest('hex')
-        loc.push(prevhash + '.html')
-        newsrc = hver.update(src, loc, info)
-      }
-      var pending = 2;
-      var hash = createHash('sha512').update(newsrc).digest('hex')
-      fs.writeFile('.hyperboot/latest.html', newsrc, done)
-      fs.writeFile('.hyperboot/' + hash, newsrc, done)
-      function done () {
-        if (--pending !== 0) return
-        console.log(info.version, hash.slice(0,32))
-      }
+    fs.readFile(file, function (err, src) {
+      if (err) return exit(err)
+      refs.source = src
+      ready()
     })
+    fs.readFile('.hyperboot/latest.html', function (err, src) {
+      if (err && err.code !== 'ENOENT') return exit(err)
+      refs.prevSource = src
+      if (!err) {
+        refs.prevHash = createHash('sha512').update(src).digest('hex')
+      }
+      ready()
+    })
+    fs.readlink('.hyperboot/latest.html', function (err, link) {
+      if (err && err.code !== 'ENOENT') return exit(err)
+      refs.prevFile = link
+      ready()
+    })
+  })
+
+  function ready (err) {
+    if (err) return exit(err)
+    if (--pending !== 0) return
+    var newsrc, prevInfo, loc = [ refs.prevFile ]
+    var info = hver.parse(refs.source)
+    if (refs.prevSource) {
+      prevInfo = hver.parse(refs.prevSource)
+      newsrc = hver.update(refs.source, loc, prevInfo)
+      var phash = createHash('sha512').update(refs.prevSource).digest('hex')
+      loc.push(phash + '.html')
+    } else {
+      newsrc = hver.update(refs.source, [], info)
+    }
+
+    var xpending = 2
+    var hash = createHash('sha512').update(newsrc).digest('hex')
+    var file = path.join('.hyperboot', hash + '.html')
+    fs.unlink('.hyperboot/latest.html', function (err) {
+      if (err && err.code !== 'ENOENT') return exit(err)
+      else makeLink()
+    })
+    fs.writeFile(file, newsrc, makeLink)
+
+    function makeLink (err) {
+      if (err) return exit(err)
+      if (--xpending !== 0) return
+      fs.symlink(path.basename(file), '.hyperboot/latest.html', function (err) {
+        if (err) return exit(err)
+        console.log(info.version, hash.slice(0,32))
+      })
+    }
   }
 } else if (argv._[0] === 'clone') {
   console.log('TODO')
