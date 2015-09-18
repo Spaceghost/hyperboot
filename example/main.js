@@ -9,7 +9,8 @@ var elems = {
   versions: document.querySelector('#versions'),
   version: document.querySelector('[template=version]'),
   versionBox: document.querySelector('.versions-outer'),
-  form: document.querySelector('form#load')
+  form: document.querySelector('form#load'),
+  frame: document.querySelector('#frame')
 }
 elems.form.addEventListener('submit', function (ev) {
   ev.preventDefault()
@@ -22,8 +23,21 @@ function addVersion (v) {
   var elem = elems.version.cloneNode(true)
   elem.removeAttribute('template')
   var link = elem.querySelector('*[data-key]')
-  link.setAttribute('href', v.hrefs[0])
+  var href = v.hrefs[0]
+  link.setAttribute('href', href)
   link.textContent = v.version
+  link.addEventListener('click', function (ev) {
+    ev.preventDefault()
+    showApp(href)
+  })
   elems.versions.appendChild(elem)
   elems.versionBox.classList.remove('hide')
+}
+
+var iframe
+function showApp (href) {
+  if (iframe) iframe.parentNode.removeChild(iframe)
+  iframe = document.createElement('iframe')
+  iframe.setAttribute('src', href)
+  elems.frame.appendChild(iframe)
 }

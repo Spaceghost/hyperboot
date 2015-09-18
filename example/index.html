@@ -1,14 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <style>
-      *[template] {
-        display: none;
-      }
-      .hide {
-        display: none;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <h1>hyperboot example</h1>
@@ -17,11 +10,14 @@
       <button type="submit">load</button>
     </form>
     <div class="versions-outer hide">
-      <h3>versions</h3>
-      <div id="versions">
-        <div template="version" class="version">
-          <a data-key="version"></a>
+      <div class="frames">
+        <div id="versions" class="left">
+          <h3>versions</h3>
+          <div template="version" class="version">
+            <a data-key="version"></a>
+          </div>
         </div>
+        <div id="frame" class="right"></div>
       </div>
     </div>
     <script src="bundle.js"></script>

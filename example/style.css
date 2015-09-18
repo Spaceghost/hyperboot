@@ -1,0 +1,34 @@
+*[template] {
+  display: none;
+}
+.hide {
+  display: none;
+}
+#versions {
+  display: inline-block;
+  width: 200px;
+  height: 500px;
+}
+#frame {
+  margin-top: 20px;
+  display: inline-block;
+  width: 500px;
+  height: 500px;
+}
+.frames {
+  position: relative;
+}
+.left {
+  position: absolute;
+  left: 0px;
+  right: 200px;
+  top: 0px;
+  bottom: 0px;
+}
+.right {
+  position: absolute;
+  left: 200px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+}
