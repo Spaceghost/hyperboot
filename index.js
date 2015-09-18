@@ -12,11 +12,11 @@ function Hyperboot () {
   if (!(this instanceof Hyperboot)) return new Hyperboot
 }
 
-Hyperboot.prototype.load = function (uhref, cb) {
+Hyperboot.prototype.load = function (href, cb) {
   var self = this
-  var href = url.resolve(location.href, uhref)
   xhr(href, function (err, res, body) {
     if (err) return cb(err)
+
     var info = hver.parse(body)
     var versions = info.versions || {}
 
@@ -24,14 +24,16 @@ Hyperboot.prototype.load = function (uhref, cb) {
       self.emit('version', {
         version: key,
         integrity: info.integrity[key] || [],
-        hrefs: versions[key]
+        hrefs: (versions[key] || []).map(function (vhref) {
+          return url.resolve(href, vhref)
+        })
       })
     })
 
     self.emit('version', {
       version: info.version,
-      integrity: info.integrity[href] || [],
-      hrefs: [ href ]
+      integrity: info.integrity[res.responseURL] || [],
+      hrefs: [res.responseURL]
     })
   })
 }
