@@ -8,5 +8,9 @@ hyperboot commit FILE
 
 hyperboot clone URL
 
-  Clone the versions starting from URL into `./.hyperboot`.
+  Clone the versions starting from URL into `.hyperboot`.
+
+hyperboot versions
+
+  List local versions from `.hyperboot`.
 

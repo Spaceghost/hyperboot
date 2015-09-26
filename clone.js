@@ -18,6 +18,7 @@ module.exports = function (href, opts, cb) {
   var hproto = url.parse(href)
   var seen = opts.seen || {}
   var seenv = opts.seenVersions || {}
+  var loader = opts.load || load
   var vers = {}
   var pending = 0
   var ev = new EventEmitter
@@ -28,9 +29,8 @@ module.exports = function (href, opts, cb) {
     if (has(seen, href)) return
     seen[href] = true
     pending++
-    var r = hyperquest(href)
-    r.once('error', cb)
-    r.pipe(concat(function (body) {
+    loader(href, function (err, body) {
+      if (err) return cb(err)
       var html = hver.parse(body)
       html.hash = createHash('sha512').update(body).digest()
       if (has(seenv, html.version)) return done()
@@ -54,8 +54,14 @@ module.exports = function (href, opts, cb) {
       function done () {
         if (--pending === 0) cb(null, vers)
       }
-    }))
+    })
   }
 }
 
 function noop () {}
+
+function load (href, cb) {
+  var r = hyperquest(href)
+  r.once('error', cb)
+  r.pipe(concat(function (body) { cb(null, body) }))
+}

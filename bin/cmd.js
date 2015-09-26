@@ -145,6 +145,15 @@ if (argv.help || argv._[0] === 'help') {
       })
     })
   }
+} else if (argv._[0] === 'versions') {
+  clone(
+    'http://localhost:9999/index.html',
+    { load: loader },
+    function (err, vers) {
+      if (err) return exit(err)
+      console.log(vers)
+    }
+  )
 } else usage(1)
 
 function exit (err) {
@@ -156,4 +165,10 @@ function usage (code) {
   var r = fs.createReadStream(path.join(__dirname, 'usage.txt'))
   r.pipe(process.stdout)
   if (code) r.on('end', function () { process.exit(code) })
+}
+
+function loader (href, cb) {
+  var p = url.parse(href).pathname
+  var file = path.basename(p)
+  fs.readFile(path.join('.hyperboot', file), cb)
 }
