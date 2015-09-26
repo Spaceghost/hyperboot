@@ -146,12 +146,12 @@ if (argv.help || argv._[0] === 'help') {
     })
   }
 } else if (argv._[0] === 'versions') {
-  clone(
-    'http://localhost:9999/index.html',
-    { load: loader },
+  clone('http://localhost:9999/index.html', { load: loader },
     function (err, vers) {
       if (err) return exit(err)
-      console.log(vers)
+      Object.keys(vers).sort(semver.compare).forEach(function (v) {
+        console.log(v)
+      })
     }
   )
 } else usage(1)
