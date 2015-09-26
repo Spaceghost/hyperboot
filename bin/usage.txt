@@ -6,9 +6,7 @@ hyperboot commit FILE
 
   Stage the version of FILE locally.
 
-hyperboot push REMOTE
+hyperboot clone URL
 
-  Push locally staged versions to REMOTE.
-
-hyperboot clone
+  Clone the versions starting from URL into `./.hyperboot`.
 
