@@ -5,6 +5,7 @@ var path = require('path')
 var has = require('has')
 var createHash = require('sha.js')
 var hver = require('html-version')
+var semver = require('semver')
 
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2), {
@@ -80,9 +81,44 @@ if (argv.help || argv._[0] === 'help') {
     }
   }
 } else if (argv._[0] === 'clone' && argv._.length >= 2) {
-  clone(argv._.slice(1).join(' '), function (err) {
+  var pending = 1, file = null
+  mkdirp('.hyperboot', function (err) {
     if (err) exit(err)
+    var c = clone(argv._.slice(1).join(' '), onclone)
+    c.on('version', onversion)
   })
+  function onclone (err, vers) {
+    if (err) return exit(err)
+    var sorted = Object.keys(vers).sort(semver.compare)
+    sorted.forEach(function (v) {
+      console.log(v, vers[v].hash.slice(0,32).toString('hex'))
+    })
+    file = path.join(
+      '.hyperboot',
+      vers[sorted[sorted.length-1]].hash.toString('hex') + '.html'
+    )
+    done()
+  }
+  function onversion (html, body) {
+    pending ++
+    var file = '.hyperboot/' + html.hash.toString('hex') + '.html'
+    fs.stat(file, function (err, stat) {
+      if (!stat) fs.writeFile(file, body, onwrite)
+      else done()
+    })
+    function onwrite (err) {
+      if (err) exit(err)
+      else done()
+    }
+  }
+  function done () {
+    if (--pending !== 0) return
+    fs.unlink('.hyperboot/index.html', function () {
+      fs.symlink(path.basename(file), '.hyperboot/index.html', function (err) {
+        if (err) return exit(err)
+      })
+    })
+  }
 } else usage(1)
 
 function exit (err) {
