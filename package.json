@@ -9,6 +9,7 @@
   "browser": "browser/index.js",
   "dependencies": {
     "concat-stream": "^1.5.0",
+    "has": "^1.0.1",
     "hyperquest": "^1.2.0",
     "semver": "^5.0.3",
     "transport-stream": "^1.4.4"

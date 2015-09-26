@@ -2,6 +2,7 @@
 var mkdirp = require('mkdirp')
 var fs = require('fs')
 var path = require('path')
+var has = require('has')
 var createHash = require('sha.js')
 var hver = require('html-version')
 
@@ -50,6 +51,9 @@ if (argv.help || argv._[0] === 'help') {
     var info = hver.parse(refs.source)
     if (refs.prevSource) {
       prevInfo = hver.parse(refs.prevSource)
+      if (has(prevInfo.versions, info.version)) {
+        return exit('cannot overwrite existing version')
+      }
       newsrc = hver.update(refs.source, loc, prevInfo)
       var phash = createHash('sha512').update(refs.prevSource).digest('hex')
       loc.push(phash + '.html')
