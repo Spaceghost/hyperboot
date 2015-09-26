@@ -9,7 +9,7 @@ var st = ecstatic(dir)
 var server = http.createServer(function (req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   if (req.url === '/') {
-    fs.readlink(path.join(dir, 'latest.html'), function (err, link) {
+    fs.readlink(path.join(dir, 'index.html'), function (err, link) {
       if (err) return error(500, res, err.message)
       res.statusCode = 302
       res.setHeader('Location', link)
