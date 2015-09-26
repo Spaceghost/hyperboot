@@ -84,18 +84,33 @@ if (argv.help || argv._[0] === 'help') {
 } else if (argv._[0] === 'clone' && argv._.length >= 2) {
   var href = argv._.slice(1).join(' ')
   var pending = 1, file = null
+  var seen = {}, seenv = {}
   mkdirp('.hyperboot', function (err) {
     if (err) return exit(err)
+    var pend = 2
     fs.readdir('.hyperboot', function (err, files) {
       if (err) return exit(err)
-      var seen = {}
       files.forEach(function (file) {
         if (file === 'index.html') return
         seen[url.resolve(href, file)] = true
       })
-      var c = clone(href, { seen: seen }, onclone)
-      c.on('version', onversion)
+      done()
     })
+    fs.readFile('.hyperboot/index.html', function (err, src) {
+      if (src) {
+        var html = hver.parse(src)
+        seenv[html.version] = true
+        Object.keys(html.versions).forEach(function (v) {
+          seenv[v] = true
+        })
+      }
+      done()
+    })
+    function done () {
+      if (--pend !== 0) return
+      var c = clone(href, { seen: seen, seenVersions: seenv }, onclone)
+      c.on('version', onversion)
+    }
   })
   function onclone (err, vers) {
     if (err) return exit(err)
@@ -103,10 +118,10 @@ if (argv.help || argv._[0] === 'help') {
     sorted.forEach(function (v) {
       console.log(v, vers[v].hash.slice(0,32).toString('hex'))
     })
-    file = path.join(
-      '.hyperboot',
-      vers[sorted[sorted.length-1]].hash.toString('hex') + '.html'
-    )
+    if (sorted.length) {
+      var latest = vers[sorted[sorted.length-1]]
+      file = path.join('.hyperboot', latest.hash.toString('hex') + '.html')
+    }
     done()
   }
   function onversion (html, body) {
@@ -123,6 +138,7 @@ if (argv.help || argv._[0] === 'help') {
   }
   function done () {
     if (--pending !== 0) return
+    if (!file) return
     fs.unlink('.hyperboot/index.html', function () {
       fs.symlink(path.basename(file), '.hyperboot/index.html', function (err) {
         if (err) return exit(err)
