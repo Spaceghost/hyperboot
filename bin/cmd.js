@@ -10,6 +10,7 @@ var argv = minimist(process.argv.slice(2), {
   alias: { h: 'help' },
   boolean: [ 'help' ]
 })
+var clone = require('../clone.js')
 
 if (argv.help || argv._[0] === 'help') {
   usage(0)
@@ -27,7 +28,7 @@ if (argv.help || argv._[0] === 'help') {
       refs.source = src
       ready()
     })
-    fs.readFile('.hyperboot/latest.html', function (err, src) {
+    fs.readFile('.hyperboot/index.html', function (err, src) {
       if (err && err.code !== 'ENOENT') return exit(err)
       refs.prevSource = src
       if (!err) {
@@ -35,7 +36,7 @@ if (argv.help || argv._[0] === 'help') {
       }
       ready()
     })
-    fs.readlink('.hyperboot/latest.html', function (err, link) {
+    fs.readlink('.hyperboot/index.html', function (err, link) {
       if (err && err.code !== 'ENOENT') return exit(err)
       refs.prevFile = link
       ready()
@@ -59,7 +60,7 @@ if (argv.help || argv._[0] === 'help') {
     var xpending = 2
     var hash = createHash('sha512').update(newsrc).digest('hex')
     var file = path.join('.hyperboot', hash + '.html')
-    fs.unlink('.hyperboot/latest.html', function (err) {
+    fs.unlink('.hyperboot/index.html', function (err) {
       if (err && err.code !== 'ENOENT') return exit(err)
       else makeLink()
     })
@@ -68,14 +69,16 @@ if (argv.help || argv._[0] === 'help') {
     function makeLink (err) {
       if (err) return exit(err)
       if (--xpending !== 0) return
-      fs.symlink(path.basename(file), '.hyperboot/latest.html', function (err) {
+      fs.symlink(path.basename(file), '.hyperboot/index.html', function (err) {
         if (err) return exit(err)
         console.log(info.version, hash.slice(0,32))
       })
     }
   }
-} else if (argv._[0] === 'clone') {
-  console.log('TODO')
+} else if (argv._[0] === 'clone' && argv._.length >= 2) {
+  clone(argv._.slice(1).join(' '), function (err) {
+    if (err) exit(err)
+  })
 } else usage(1)
 
 function exit (err) {

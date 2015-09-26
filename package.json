@@ -8,6 +8,8 @@
   "main": "index.js",
   "browser": "browser/index.js",
   "dependencies": {
+    "concat-stream": "^1.5.0",
+    "hyperquest": "^1.2.0",
     "semver": "^5.0.3",
     "transport-stream": "^1.4.4"
   },
