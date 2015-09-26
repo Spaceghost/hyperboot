@@ -6,6 +6,7 @@ var has = require('has')
 var createHash = require('sha.js')
 var hver = require('html-version')
 var semver = require('semver')
+var url = require('url')
 
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2), {
@@ -81,11 +82,20 @@ if (argv.help || argv._[0] === 'help') {
     }
   }
 } else if (argv._[0] === 'clone' && argv._.length >= 2) {
+  var href = argv._.slice(1).join(' ')
   var pending = 1, file = null
   mkdirp('.hyperboot', function (err) {
-    if (err) exit(err)
-    var c = clone(argv._.slice(1).join(' '), onclone)
-    c.on('version', onversion)
+    if (err) return exit(err)
+    fs.readdir('.hyperboot', function (err, files) {
+      if (err) return exit(err)
+      var seen = {}
+      files.forEach(function (file) {
+        if (file === 'index.html') return
+        seen[url.resolve(href, file)] = true
+      })
+      var c = clone(href, { seen: seen }, onclone)
+      c.on('version', onversion)
+    })
   })
   function onclone (err, vers) {
     if (err) return exit(err)

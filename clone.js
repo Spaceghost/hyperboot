@@ -8,10 +8,17 @@ var once = require('once')
 var createHash = require('sha.js')
 var EventEmitter = require('events').EventEmitter
 
-module.exports = function (href, cb) {
+module.exports = function (href, opts, cb) {
+  if (typeof opts === 'function') {
+    cb = opts
+    opts = {}
+  }
+  if (!opts) opts = {}
   cb = once(cb || noop)
   var hproto = url.parse(href)
-  var seen = {}, seenv = {}, vers = {}
+  var seen = opts.seen || {}
+  var seenv = opts.seenVersions || {}
+  var vers = {}
   var pending = 0
   var ev = new EventEmitter
   request(href)
@@ -25,7 +32,7 @@ module.exports = function (href, cb) {
     r.once('error', cb)
     r.pipe(concat(function (body) {
       var html = hver.parse(body)
-      html.hash = createHash('sha1').update(body).digest()
+      html.hash = createHash('sha512').update(body).digest()
       if (has(seenv, html.version)) return done()
       ev.emit('version', html, body)
       vers[html.version] = html
