@@ -1,0 +1,14 @@
+hyperboot init
+
+  Print a starter html file to STDOUT.
+
+hyperboot commit FILE
+
+  Stage the version of FILE locally.
+
+hyperboot push REMOTE
+
+  Push locally staged versions to REMOTE.
+
+hyperboot clone
+

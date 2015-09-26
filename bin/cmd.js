@@ -6,12 +6,17 @@ var createHash = require('sha.js')
 var hver = require('html-version')
 
 var minimist = require('minimist')
-var argv = minimist(process.argv.slice(2))
+var argv = minimist(process.argv.slice(2), {
+  alias: { h: 'help' },
+  boolean: [ 'help' ]
+})
 
-if (argv._[0] === 'init') {
+if (argv.help || argv._[0] === 'help') {
+  usage(0)
+} else if (argv._[0] === 'init') {
   fs.createReadStream(path.join(__dirname, 'init.html'))
     .pipe(process.stdout)
-} else if (argv._[0] === 'release') {
+} else if (argv._[0] === 'commit') {
   var refs = {}, pending = 3
   var file = argv._[1]
 
@@ -71,9 +76,15 @@ if (argv._[0] === 'init') {
   }
 } else if (argv._[0] === 'clone') {
   console.log('TODO')
-}
+} else usage(1)
 
 function exit (err) {
   console.error(err.message || String(err))
   process.exit(1)
+}
+
+function usage (code) {
+  var r = fs.createReadStream(path.join(__dirname, 'usage.txt'))
+  r.pipe(process.stdout)
+  if (code) r.on('end', function () { process.exit(code) })
 }
