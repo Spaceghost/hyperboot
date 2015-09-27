@@ -60,8 +60,10 @@ if (argv.help || argv._[0] === 'help') {
       newsrc = hver.update(refs.source, loc, prevInfo)
       var phash = createHash('sha512').update(refs.prevSource).digest('hex')
       loc.push(phash + '.html')
-    } else {
+    } else if (info.latest.length || info.signature.length) {
       newsrc = hver.update(refs.source, [], info)
+    } else {
+      newsrc = refs.source
     }
 
     var xpending = 2

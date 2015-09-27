@@ -10,6 +10,7 @@
   "dependencies": {
     "concat-stream": "^1.5.0",
     "has": "^1.0.1",
+    "html-version": "^1.1.2",
     "hyperquest": "^1.2.0",
     "once": "^1.3.2",
     "semver": "^5.0.3",
