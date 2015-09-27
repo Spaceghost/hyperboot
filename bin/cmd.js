@@ -10,14 +10,16 @@ var url = require('url')
 
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2), {
-  alias: { h: 'help' },
-  boolean: [ 'help', 'full' ]
+  alias: { h: 'help', v: 'verbose' },
+  boolean: [ 'help', 'full', 'version' ]
 })
 var walk = require('../lib/walk.js')
 var scrub = require('../lib/scrub.js')
 
 if (argv.help || argv._[0] === 'help') {
   usage(0)
+} else if (argv.version) {
+  console.log(require('../package.json').version)
 } else if (argv._[0] === 'init') {
   fs.createReadStream(path.join(__dirname, 'init.html'))
     .pipe(process.stdout)
@@ -153,7 +155,9 @@ if (argv.help || argv._[0] === 'help') {
   walk(href, { load: loader }, function (err, vers) {
       if (err) return exit(err)
       Object.keys(vers).sort(semver.compare).forEach(function (v) {
-        console.log(v)
+        if (argv.verbose) {
+          console.log(v, vers[v].hash.slice(0,32).toString('hex'))
+        } else console.log(v)
       })
     }
   )
@@ -162,7 +166,10 @@ if (argv.help || argv._[0] === 'help') {
   var version = argv._[1]
   var w = walk(href, { load: loader })
   w.on('version', function (html, body) {
-    if (html.version !== version) return
+    if (/^[0-9A-Fa-f]{6,}$/.test(version)) {
+      var hex = html.hash.toString('hex')
+      if (hex.slice(0,version.length) !== version) return
+    } else if (html.version !== version) return
     w.stop()
     if (argv.full) {
       process.stdout.write(body)

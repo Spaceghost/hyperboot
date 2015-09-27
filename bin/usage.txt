@@ -13,4 +13,11 @@ hyperboot clone URL
 hyperboot versions
 
   List local versions from `.hyperboot`.
+  With -v, print truncated hashes in another column.
+
+hyperboot show VERSION
+hyperboot show HASH
+
+  Print the contents of the html at VERSION or HASH.
+  With --full, print the content with included meta data.
 
