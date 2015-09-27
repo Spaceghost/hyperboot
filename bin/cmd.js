@@ -11,9 +11,10 @@ var url = require('url')
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2), {
   alias: { h: 'help' },
-  boolean: [ 'help' ]
+  boolean: [ 'help', 'full' ]
 })
 var walk = require('../lib/walk.js')
+var scrub = require('../lib/scrub.js')
 
 if (argv.help || argv._[0] === 'help') {
   usage(0)
@@ -146,14 +147,27 @@ if (argv.help || argv._[0] === 'help') {
     })
   }
 } else if (argv._[0] === 'versions') {
-  walk('file://' + path.join(process.cwd(), 'index.html'), { load: loader },
-    function (err, vers) {
+  var href = 'file://' + path.join(process.cwd(), 'index.html')
+  walk(href, { load: loader }, function (err, vers) {
       if (err) return exit(err)
       Object.keys(vers).sort(semver.compare).forEach(function (v) {
         console.log(v)
       })
     }
   )
+} else if (argv._[0] === 'show') {
+  var href = 'file://' + path.join(process.cwd(), 'index.html')
+  var version = argv._[1]
+  var w = walk(href, { load: loader })
+  w.on('version', function (html, body) {
+    if (html.version !== version) return
+    w.stop()
+    if (argv.full) {
+      process.stdout.write(body)
+    } else {
+      process.stdout.write(scrub(body))
+    }
+  })
 } else usage(1)
 
 function exit (err) {
