@@ -13,7 +13,7 @@ var argv = minimist(process.argv.slice(2), {
   alias: { h: 'help' },
   boolean: [ 'help' ]
 })
-var clone = require('../clone.js')
+var walk = require('../lib/walk.js')
 
 if (argv.help || argv._[0] === 'help') {
   usage(0)
@@ -108,7 +108,7 @@ if (argv.help || argv._[0] === 'help') {
     })
     function done () {
       if (--pend !== 0) return
-      var c = clone(href, { seen: seen, seenVersions: seenv }, onclone)
+      var c = walk(href, { seen: seen, seenVersions: seenv }, onclone)
       c.on('version', onversion)
     }
   })
@@ -146,7 +146,7 @@ if (argv.help || argv._[0] === 'help') {
     })
   }
 } else if (argv._[0] === 'versions') {
-  clone('http://localhost:9999/index.html', { load: loader },
+  walk('file://' + path.join(process.cwd(), 'index.html'), { load: loader },
     function (err, vers) {
       if (err) return exit(err)
       Object.keys(vers).sort(semver.compare).forEach(function (v) {
