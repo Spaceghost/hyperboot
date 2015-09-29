@@ -7,6 +7,8 @@ var createHash = require('sha.js')
 var hver = require('html-version')
 var semver = require('semver')
 var url = require('url')
+var hyperquest = require('hyperquest')
+var concat = require('concat-stream')
 
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2), {
@@ -113,7 +115,11 @@ if (argv.help || argv._[0] === 'help') {
     })
     function done () {
       if (--pend !== 0) return
-      var c = walk(href, { seen: seen, seenVersions: seenv }, onclone)
+      var c = walk(href, {
+        seen: seen,
+        seenVersions: seenv,
+        load: hloader
+      }, onclone)
       c.on('version', onversion)
     }
   })
@@ -152,7 +158,7 @@ if (argv.help || argv._[0] === 'help') {
   }
 } else if (argv._[0] === 'versions') {
   var href = 'file://' + path.join(process.cwd(), 'index.html')
-  walk(href, { load: loader }, function (err, vers) {
+  walk(href, { load: floader }, function (err, vers) {
       if (err) return exit(err)
       Object.keys(vers).sort(semver.compare).forEach(function (v) {
         if (argv.verbose) {
@@ -164,7 +170,7 @@ if (argv.help || argv._[0] === 'help') {
 } else if (argv._[0] === 'show') {
   var href = 'file://' + path.join(process.cwd(), 'index.html')
   var version = argv._[1]
-  var w = walk(href, { load: loader })
+  var w = walk(href, { load: floader })
   w.on('version', function (html, body) {
     if (/^[0-9A-Fa-f]{6,}$/.test(version)) {
       var hex = html.hash.toString('hex')
@@ -190,8 +196,14 @@ function usage (code) {
   if (code) r.on('end', function () { process.exit(code) })
 }
 
-function loader (href, cb) {
+function floader (href, cb) {
   var p = url.parse(href).pathname
   var file = path.basename(p)
   fs.readFile(path.join('.hyperboot', file), cb)
+}
+
+function hloader (href, cb) {
+  var r = hyperquest(href)
+  r.once('error', cb)
+  r.pipe(concat(function (body) { cb(null, body) }))
 }

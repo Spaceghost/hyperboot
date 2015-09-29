@@ -1,5 +1,9 @@
+var level = require('level-browserify')
+var db = level('hyperboot')
+
 var hyperboot = require('../')
-var boot = hyperboot()
+var boot = hyperboot(db)
+
 boot.on('version', addVersion)
 boot.versions(function (err, versions) {
   versions.forEach(addVersion)
@@ -10,7 +14,9 @@ var elems = {
   version: document.querySelector('[template=version]'),
   versionBox: document.querySelector('.versions-outer'),
   form: document.querySelector('form#load'),
-  frame: document.querySelector('#frame')
+  frame: document.querySelector('#frame'),
+  clear: document.querySelector('#clear'),
+  versionNodes: []
 }
 elems.form.addEventListener('submit', function (ev) {
   ev.preventDefault()
@@ -19,9 +25,19 @@ elems.form.addEventListener('submit', function (ev) {
   })
 })
 
+elems.clear.addEventListener('click', function (ev) {
+  ev.preventDefault()
+  boot.clear()
+})
+
 function addVersion (v) {
   var elem = elems.version.cloneNode(true)
   elem.removeAttribute('template')
+  boot.on('remove', function f (ver) {
+    if (ver !== v.version) return
+    boot.removeListener('remove', f)
+    elems.versions.removeChild(elem)
+  })
   var link = elem.querySelector('*[data-key]')
   var href = v.hrefs[0]
   link.setAttribute('href', href)
