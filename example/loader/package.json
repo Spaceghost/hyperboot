@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "ecstatic -p 8001 . --gzip -H 'Access-Control-Allow-Origin: *'",
+    "start": "ecstatic -p 8001 . --gzip",
     "build": "browserify main.js | uglifyjs -cm | tee bundle.js | gzip > bundle.js.gz",
     "watch": "watchify main.js -o bundle.js -dv"
   },
