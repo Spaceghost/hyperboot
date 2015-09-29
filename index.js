@@ -23,6 +23,7 @@ function Hyperboot (db, opts) {
   this._seen = {}
   this._seenv = {}
   this._seenmap = {}
+  this._extra = {}
   this.versions(function (err, versions) {
     versions.forEach(function (v) { seen(v) })
     self._ready = true
@@ -39,9 +40,9 @@ function Hyperboot (db, opts) {
   function seen (v, hrefs) {
     self._seenmap[v.version] = []
     v.hrefs.forEach(function (href) {
-console.log('SEEN', href, hrefs)
       if (hrefs) self._seen[href] = true
       self._seenmap[v.version].push(href)
+      self._extra[href] = v.extra
     })
     self._seenv[v.version] = true
   }
@@ -65,15 +66,20 @@ Hyperboot.prototype.load = ready(function (href, cb) {
   var w = walk(href, {
     seen: seen,
     seenVersions: self._seenv,
+    extra: self._extra,
     load: loader
   }, onwalk)
-  w.on('version', function (v) {
+  w.on('version', function (v, body) {
     pending++
     self.emit('version', v)
-    self.db.put('version!' + packer.pack(v.version), v, function (err) {
+    self.db.batch([
+      { type: 'put', key: 'version!' + packer.pack(v.version), value: v },
+      { type: 'put', key: 'html!' + v.hash, value: body.toString('utf8') }
+    ], onbatch)
+    function onbatch (err) {
       if (err) cb(err)
       else done()
-    })
+    }
   })
   return w
   function done () { if (--pending === 0) cb(null, vers) }
@@ -84,9 +90,23 @@ Hyperboot.prototype.load = ready(function (href, cb) {
   }
 })
 
+Hyperboot.prototype.get = function (ver, cb) {
+  var self = this
+  if (semver.valid(ver)) {
+    self.db.get('version!' + packer.pack(ver), function (err, v) {
+      if (err) cb(err)
+      else self.db.get('html!' + v.hash, cb)
+    })
+  } else {
+    self.db.get('html!' + ver, cb)
+  }
+}
+
 Hyperboot.prototype.versions = function (cb) {
   var versions = cb ? [] : null
-  return this.db.createReadStream('version!').pipe(through.obj(write, end))
+  return this.db.createReadStream({ gt: 'version!', lt: 'version!~' })
+    .pipe(through.obj(write, end))
+
   function write (row, enc, next) {
     if (versions) versions.push(row.value)
     this.push(row.value)
