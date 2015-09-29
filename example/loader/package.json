@@ -2,7 +2,7 @@
   "scripts": {
     "start": "ecstatic -p 8001 . --gzip",
     "build": "browserify main.js | uglifyjs -cm | tee bundle.js | gzip > bundle.js.gz",
-    "watch": "watchify main.js -o bundle.js -dv"
+    "watch": "rm -f bundle.js.gz && watchify main.js -o bundle.js -dv"
   },
   "dependencies": {
     "browserify": "^11.1.0",

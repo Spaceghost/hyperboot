@@ -7,7 +7,7 @@ var packer = require('./lib/pack.js')
 var defaults = require('levelup-defaults')
 var walk = require('./lib/walk.js')
 var through = require('through2')
-var xtend = require('xtend')
+var copy = require('shallow-copy')
 
 var loader = require('./lib/load/platform.js')
 
@@ -24,11 +24,11 @@ function Hyperboot (db, opts) {
   this._seenv = {}
   this._seenmap = {}
   this.versions(function (err, versions) {
-    versions.forEach(seen)
+    versions.forEach(function (v) { seen(v) })
     self._ready = true
     self.emit('ready')
   })
-  self.on('version', seen)
+  self.on('version', function (v) { seen(v, true) })
   self.on('remove', function (v) {
     delete self._seenv[v]
     self._seenmap[v].forEach(function (href) {
@@ -36,10 +36,11 @@ function Hyperboot (db, opts) {
     })
     delete self._seenmap[v]
   })
-  function seen (v) {
+  function seen (v, hrefs) {
     self._seenmap[v.version] = []
     v.hrefs.forEach(function (href) {
-      self._seen[href] = true
+console.log('SEEN', href, hrefs)
+      if (hrefs) self._seen[href] = true
       self._seenmap[v.version].push(href)
     })
     self._seenv[v.version] = true
@@ -58,8 +59,11 @@ function ready (fn) {
 Hyperboot.prototype.load = ready(function (href, cb) {
   var self = this
   var pending = 1, vers
+  var seen = copy(self._seen)
+  delete seen[href]
+
   var w = walk(href, {
-    seen: self._seen,
+    seen: seen,
     seenVersions: self._seenv,
     load: loader
   }, onwalk)
