@@ -1,4 +1,3 @@
-var xhr = require('xhr')
 var url = require('url')
 var inherits = require('inherits')
 var EventEmitter = require('events').EventEmitter
@@ -9,6 +8,8 @@ var defaults = require('levelup-defaults')
 var walk = require('./lib/walk.js')
 var through = require('through2')
 var xtend = require('xtend')
+
+var loader = require('./lib/load/platform.js')
 
 module.exports = Hyperboot
 inherits(Hyperboot, EventEmitter)
@@ -29,11 +30,11 @@ function Hyperboot (db, opts) {
   })
   self.on('version', seen)
   self.on('remove', function (v) {
-    self._seenv[v] = false
+    delete self._seenv[v]
     self._seenmap[v].forEach(function (href) {
-      self._seen[href] = false
+      delete self._seen[href]
     })
-    self._seenmap[v] = null
+    delete self._seenmap[v]
   })
   function seen (v) {
     self._seenmap[v.version] = []
@@ -117,19 +118,12 @@ Hyperboot.prototype.clear = function (cb) {
       if (err) return cb(err)
       vers.forEach(function (v) {
         v.hrefs.forEach(function (href) {
-          self._seen[href] = false
+          delete self._seen[href]
         })
-        self._seenv[v.version] = false
+        delete self._seenv[v.version]
         self.emit('remove', v.version)
       })
     }
-  })
-}
-
-function loader (href, cb) {
-  xhr(href, function (err, res, body) {
-    if (err) return cb(err)
-    else cb(null, body)
   })
 }
 

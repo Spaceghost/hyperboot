@@ -1,7 +1,7 @@
 var level = require('level-browserify')
 var db = level('hyperboot')
 
-var hyperboot = require('../')
+var hyperboot = require('../../')
 var boot = hyperboot(db)
 
 boot.on('version', addVersion)

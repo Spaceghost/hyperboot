@@ -6,6 +6,9 @@
   },
   "description": "offline webapp bootloader",
   "main": "index.js",
+  "browser": {
+    "./lib/load/platform.js": "./lib/load/xhr.js"
+  },
   "browser": "browser/index.js",
   "dependencies": {
     "cheerio": "~0.19.0",
@@ -22,7 +25,7 @@
     "xtend": "3.0.0"
   },
   "devDependencies": {
-    "level-browserify": "^1.0.1"
+    "tape": "^4.1.0"
   },
   "repository": {
     "type": "git",

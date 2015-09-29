@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "start": "ecstatic -p 8001 . --gzip -H 'Access-Control-Allow-Origin: *'",
+    "build": "browserify main.js | uglifyjs -cm | tee bundle.js | gzip > bundle.js.gz",
+    "watch": "watchify main.js -o bundle.js -dv"
+  },
+  "dependencies": {
+    "browserify": "^11.1.0",
+    "ecstatic": "^1.0.1",
+    "level-browserify": "^1.0.1",
+    "uglify-js": "^2.4.24",
+    "watchify": "^3.3.1"
+  }
+}
