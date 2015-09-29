@@ -21,15 +21,25 @@ function Hyperboot (db, opts) {
   this._ready = false
   this._seen = {}
   this._seenv = {}
+  this._seenmap = {}
   this.versions(function (err, versions) {
     versions.forEach(seen)
     self._ready = true
     self.emit('ready')
   })
   self.on('version', seen)
+  self.on('remove', function (v) {
+    self._seenv[v] = false
+    self._seenmap[v].forEach(function (href) {
+      self._seen[href] = false
+    })
+    self._seenmap[v] = null
+  })
   function seen (v) {
+    self._seenmap[v.version] = []
     v.hrefs.forEach(function (href) {
       self._seen[href] = true
+      self._seenmap[v.version].push(href)
     })
     self._seenv[v.version] = true
   }
@@ -52,7 +62,7 @@ Hyperboot.prototype.load = ready(function (href, cb) {
     seenVersions: self._seenv,
     load: loader
   }, onwalk)
-  w.once('version', function (v) {
+  w.on('version', function (v) {
     pending++
     self.emit('version', v)
     self.db.put('version!' + packer.pack(v.version), v, function (err) {
