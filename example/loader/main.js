@@ -44,16 +44,18 @@ function addVersion (v) {
   link.textContent = v.version
   link.addEventListener('click', function (ev) {
     ev.preventDefault()
-    showApp(href)
+    showApp(v.hash)
   })
   elems.versions.appendChild(elem)
   elems.versionBox.classList.remove('hide')
 }
 
 var iframe
-function showApp (href) {
+function showApp (hash) {
   if (iframe) iframe.parentNode.removeChild(iframe)
   iframe = document.createElement('iframe')
-  iframe.setAttribute('src', href)
+  boot.get(hash, function (err, html) {
+    iframe.setAttribute('src', 'data:text/html;base64,' + btoa(html))
+  })
   elems.frame.appendChild(iframe)
 }

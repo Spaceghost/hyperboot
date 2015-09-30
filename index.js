@@ -9,7 +9,7 @@ var walk = require('./lib/walk.js')
 var through = require('through2')
 var copy = require('shallow-copy')
 
-var loader = require('./lib/load/platform.js')
+var loader = require('./lib/load/http.js')
 
 module.exports = Hyperboot
 inherits(Hyperboot, EventEmitter)
