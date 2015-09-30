@@ -1,17 +1,83 @@
 # hyperboot
 
-offline webapp bootloader
+versioned offline webapp bootloader
 
-[Try the demo.](http://demo.hyperboot.org)
-
-Single page applications, where appropriate, have many usability benefits: you
-can just give someone a URL and they can immediately start using the
-application. Native and desktop applications require more setup but once you've
+Single page applications, where appropriate, have many usability benefits: once
+you give someone a URL they can immediately load your app and start using it.
+Native and desktop applications require more setup but once you've
 installed an app it doesn't change or disappear without warning.
 
 `hyperboot` gives your users the benefits of explicit, immutable versioning with
-control over upgrades while preserving the simplicity of passing around a URL.
-Plus, offline works by default!
+control over upgrades using the
+[html-version-spec](https://github.com/substack/html-version-spec)
+while preserving the simplicity of passing around a URL.
+
+# quick start
+
+Install hyperboot and generate a starter html file:
+
+```
+$ npm install -g hyperboot
+$ hyperboot init > index.html
+```
+
+Edit `index.html` to your liking, then:
+
+```
+$ hyperboot commit index.html
+1.0.0 3503106b1b989b0407ede086cb2223d5
+```
+
+We've now committed version 1.0.0.
+
+To put your creation online, serve up the hidden `.hyperboot` directory:
+
+```
+$ ecstatic -p 8000 .hyperboot/ \
+  -H 'Access-Control-Allow-Origin: *'
+  -H 'Access-Control-Allow-Headers: If-Modified-Since, If-None-Match'
+```
+
+The `Access-Control-*` (CORS) headers are necessary for browser loaders to load
+your application across domains.
+
+Now you can view your web app on `http://localhost:8000`. This version of your
+app is usable on its own and hyperboot loaders will be able to see all of your
+published versions.
+
+## publish a new version
+
+To publish a new version, we can run `hyperboot commit` again after editing the
+meta version tag in the html:
+
+``` html
+<meta name="version" content="1.0.1">
+```
+
+Now to commit version 1.0.1:
+
+```
+$ hyperboot commit index.html 
+1.0.1 446c5dfa3d7dbd93f181506bdbef9369
+```
+
+## replicate
+
+Elsewhere, we can replicate the webapp and all of its version history with the
+`hyperboot clone` command:
+
+```
+$ hyperboot clone http://localhost:8000
+1.0.0 3503106b1b989b0407ede086cb2223d5
+1.0.1 446c5dfa3d7dbd93f181506bdbef9369
+```
+
+All of the new versions are printed to stdout. If we run the command again, we
+get no output because there are no new versions available:
+
+```
+$ hyperboot clone http://localhost:8000
+```
 
 # problems
 
@@ -23,176 +89,93 @@ experience with webapps:
 * underlying infrastructure changes or vanishes
 * an app is compromised silently with no mechanism for auditing
 
-Compromising apps by criminal, spy agency, or court order will become an
+Compromising webapps by criminal, spy agency, or court order will become an
 increasingly important problem to solve as browsers gain crypto primitives.
 Malicious code could be silently inserted into any update.
-
-hyperboot solves some of these problems by using immutable hashes and control over
-upgrades, but a more complete solution might also involve:
-
-* use peer to peer connections (webrtc, webtorrent, etc) as much as possible
-* document and version the external protocols and provide a mechanism to swap
-out external endpoints
-* let users volunteer server infrastructure with open protocols and service
-implementations, like seeding content on bittorrent
-
-# getting started
-
-For a more complete example, look at the
-[hyperboot-example-app repository](https://github.com/substack/hyperboot-example-app).
-
-Otherise, to get started do:
-
-```
-$ npm install -g hyperboot html-inline
-$ echo -n "console.log('beep boop')" > main.js
-$ echo -e '<body><script src="main.js"></script></body>' > index.html
-$ html-inline index.html > bundle.html
-```
-
-now given our `bundle.html` with complete inlined assets:
-
-```
-$ cat bundle.html
-<body><script>console.log('beep boop')</script>
-```
-
-we can generate a release:
-
-```
-$ hyperboot release bundle.html -v 1.0.0 -m 'initial release!'
-9ef1a61f55fade7724f09f5a8940e2dfcacd371103f6eae3f0ba0286a8ada05e
-```
-
-The `hyperboot release` command generates a new `hyperdata` directory:
-
-```
-$ ls hyperdata/
-9ef1a61f55fade7724f09f5a8940e2dfcacd371103f6eae3f0ba0286a8ada05e.html
-versions.json
-```
-
-Now we can start a hyperboot server that will read releases from `./hyperdata`:
-
-```
-$ hyperboot server -p 5000 -v
-http://localhost:5000
-```
-
-The `-v` tells the server to print all HTTP requests.
-
-Click the icon in the upper right corner to see the application releases.
-Refresh the page, kill the server, and note how the app keeps working just the
-same!
-
-You can even upgrade hyperboot itself and select among different hyperboot
-versions.
 
 # usage
 
 ```
-hyperboot release HTMLFILE { -n NAME, -m MESSAGE, -v VERSION }
+hyperboot init
 
-  Create a release for an application called NAME from HTMLFILE, a
-  self-contained html payload. All of HTMLFILE's assets should be inlined.
-  
-  Set a VERSION and optionally a MESSAGE for the release.
-  These will be visible to the user along with the hash in the user
-  interface.
-  
-  On success, prints the HASH of this release to stdout.
+  Print a starter html file to STDOUT.
 
-hyperboot unrelease HASH
+hyperboot commit FILE
 
-  Remove a release. Note: clients will still keep all releases they have ever
-  downloaded. Use this feature for local debugging only or to save disk space.
+  Stage the version of FILE locally.
 
-  This feature will not unpublish. There is no way to really unpublish.
-  If you unrelease a build, clients will refuse to load anything else that has
-  the same version of the removed build, so you must increment the version
-  number.
+hyperboot clone URL
 
-hyperboot upgrade
+  Clone the versions starting from URL into `.hyperboot`.
 
-  Make the current version of the hyperboot bootloader available to clients,
-  if they choose to use it.
+hyperboot versions
 
-hyperboot server { -p PORT }
+  List local versions from `.hyperboot`.
+  With -v, print truncated hashes in another column.
 
-  Start an http server for the app.
+hyperboot show VERSION
+hyperboot show HASH
 
-hyperboot list
-
-  Show the available releases.
+  Print the contents of the html at VERSION or HASH.
+  With --full, print the content with included meta data.
 
 ```
 
-# url control
+# api
 
-You can drive some behaviors in hyperboot by adding a hash to the url.
+The `hyperboot` API can be used to build loaders for node and the browser.
 
-* `/#v` - show the version list only without loading a version at startup
-* `/#h=HASH` - load a version by its hash
-
-# postMessage forwarding
-
-In addition to exposing an RPC channel described below, the application will
-also forward external postMessage events to the currently running applicaiton.
-
-# rpc methods
-
-Applications can interface with the bootloader to a limited degree over
-a postMessage bus. Just load the `hyperboot/rpc` module from your browser
-application:
-
-```
-var rpc = require('hyperboot/rpc')
+``` js
+var hyperboot = require('hyperboot')
 ```
 
-## rpc.show()
+## var boot = hyperboot(db)
 
-Show the configuration UI.
+Create a hyperboot instance `boot` from a levelup handle `db`.
 
-## rpc.hide()
+## boot.versions(cb)
 
-Hide the configuration UI.
+Load all the known versions as `cb(err, versions)`.
 
-## rpc.toggle()
+The format of each version object is described in the `'version'` event below.
 
-Toggle the configuration UI's visibility.
+## var walk = boot.load(href, cb)
 
-## rpc.versions(cb)
+Walk the hyperboot data at `href` recursively looking for new versions.
+`cb(err, versions)` fires with an array of the versions found.
 
-Request the current and available versions.
-`cb(res)` fires with the response `res`:
+`walk` is an event emitter that emits `'version'` events for each new available
+webapp version found under `href`.
 
-```
-{
-  current: 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
-  versions: [
-    {
-      hash: 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
-      version: '1.2.3',
-      message: 'whatever...'
-    },
-    // and more...
-  ]
-}
-```
+The format of each version object is described in the `'version'` event below.
 
-# todo
+## boot.on('version', function (version, html) {})
 
-* load versions from url
-* auditing tools
-* backups, downloading, mirroring apps
-* sourcemap-powered in-browser auditing?
+Each time a new webapp version is loaded, the `'version'` event fires with an
+`html` buffer payload and a version object:
 
-# in closing
+* `version.version` - the semver version string
+* `version.hrefs` - the known locations of the document as an array of URLs
+* `version.predecessor` - the previous version
+* `version.versions` - any extra versions known by this document
+* `version.hash` - the sha512 hex string of the content
 
-The default mechanics of the web are highly skewed toward service providers and
-away from users. To correct this imbalance, we developers should irrevocably
-limit our own ability to exert control. A manifesto means nothing without a
-mechanism.
+The version object augments the return value from
+[html-version](https://npmjs.com/package/html-version)`.parse()`.
+
+## boot.get(version, cb)
+## boot.get(hash, cb)
+
+Load the html payload by a sha512 hash `hash` or a semver version string
+`version` into `cb(err, html)`.
+
+## boot.remove(version, cb)
+
+Remove a version by its semver `version` string.
+
+## boot.clear(cb)
+
+Remove all known versions.
 
 # install
 
