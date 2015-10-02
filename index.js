@@ -74,7 +74,12 @@ Hyperboot.prototype.load = ready(function (href, cb) {
     self.emit('version', v)
     self.db.batch([
       { type: 'put', key: 'version!' + packer.pack(v.version), value: v },
-      { type: 'put', key: 'html!' + v.hash, value: body.toString('utf8') }
+      {
+        type: 'put',
+        key: 'html!' + v.hash,
+        value: body.toString('utf8'),
+        valueEncoding: 'utf8'
+      }
     ], onbatch)
     function onbatch (err) {
       if (err) cb(err)
@@ -95,7 +100,7 @@ Hyperboot.prototype.get = function (ver, cb) {
   if (semver.valid(ver)) {
     self.db.get('version!' + packer.pack(ver), function (err, v) {
       if (err) cb(err)
-      else self.db.get('html!' + v.hash, cb)
+      else self.db.get('html!' + v.hash, { valueEncoding: 'utf8' }, cb)
     })
   } else {
     self.db.get('html!' + ver, cb)
