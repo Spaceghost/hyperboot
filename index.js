@@ -71,19 +71,20 @@ Hyperboot.prototype.load = ready(function (href, cb) {
   }, onwalk)
   w.on('version', function (v, body) {
     pending++
-    self.emit('version', v)
+    var bodystr = body.toString('utf8')
     self.db.batch([
       { type: 'put', key: 'version!' + packer.pack(v.version), value: v },
       {
         type: 'put',
         key: 'html!' + v.hash,
-        value: body.toString('utf8'),
+        value: bodystr,
         valueEncoding: 'utf8'
       }
     ], onbatch)
     function onbatch (err) {
-      if (err) cb(err)
-      else done()
+      if (err) return cb(err)
+      self.emit('version', v, bodystr)
+      done()
     }
   })
   return w
@@ -103,7 +104,7 @@ Hyperboot.prototype.get = function (ver, cb) {
       else self.db.get('html!' + v.hash, { valueEncoding: 'utf8' }, cb)
     })
   } else {
-    self.db.get('html!' + ver, cb)
+    self.db.get('html!' + ver, { valueEncoding: 'utf8' }, cb)
   }
 }
 
