@@ -101,8 +101,10 @@ hyperboot init
   Print a starter html file to STDOUT.
 
 hyperboot commit FILE
+hyperboot commit -
 
   Stage the version of FILE locally.
+  If FILE is "-" or not given, read from STDIN.
 
 hyperboot clone URL
 

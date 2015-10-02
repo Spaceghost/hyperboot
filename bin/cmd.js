@@ -30,10 +30,16 @@ if (argv.help || argv._[0] === 'help') {
 } else if (argv._[0] === 'commit') {
   var refs = {}, pending = 3
   var file = argv._[1]
+  var concat = require('concat-stream')
 
   mkdirp('.hyperboot', function (err) {
     if (err) return exit(err)
-    fs.readFile(file, function (err, src) {
+    if (!file || file === '-') {
+      process.stdin.pipe(concat(function (src) {
+        refs.source = src
+        ready()
+      }))
+    } else fs.readFile(file, function (err, src) {
       if (err) return exit(err)
       refs.source = src
       ready()
