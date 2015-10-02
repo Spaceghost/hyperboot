@@ -33,13 +33,11 @@ We've now committed version 1.0.0.
 To put your creation online, serve up the hidden `.hyperboot` directory:
 
 ```
-$ ecstatic -p 8000 .hyperboot/ \
-  -H 'Access-Control-Allow-Origin: *'
-  -H 'Access-Control-Allow-Headers: If-Modified-Since, If-None-Match'
+$ ecstatic --cors -p 8000 .hyperboot
 ```
 
-The `Access-Control-*` (CORS) headers are necessary for browser loaders to load
-your application across domains.
+The `--cors` headers are necessary for browser loaders to load your application
+across domains.
 
 Now you can view your web app on `http://localhost:8000`. This version of your
 app is usable on its own and hyperboot loaders will be able to see all of your
