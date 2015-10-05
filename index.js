@@ -98,13 +98,22 @@ Hyperboot.prototype.load = ready(function (href, cb) {
 
 Hyperboot.prototype.get = function (ver, cb) {
   var self = this
-  if (semver.valid(ver)) {
-    self.db.get('version!' + packer.pack(ver), function (err, v) {
-      if (err) cb(err)
-      else self.db.get('html!' + v.hash, { valueEncoding: 'utf8' }, cb)
+  if (ver === 'latest') {
+    self.versions(function (err, vers) {
+      if (err) return cb(err)
+      if (!vers.length) return cb(new Error('no versions available'))
+      ongetver(null, vers.sort(function (a, b) {
+        return semver.compare(a.version, b.version)
+      }).slice(-1)[0])
     })
+  } else if (semver.valid(ver)) {
+    self.db.get('version!' + packer.pack(ver), ongetver)
   } else {
     self.db.get('html!' + ver, { valueEncoding: 'utf8' }, cb)
+  }
+  function ongetver (err, v) {
+    if (err) cb(err)
+    else self.db.get('html!' + v.hash, { valueEncoding: 'utf8' }, cb)
   }
 }
 
