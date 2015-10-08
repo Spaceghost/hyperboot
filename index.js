@@ -8,6 +8,8 @@ var defaults = require('levelup-defaults')
 var walk = require('./lib/walk.js')
 var through = require('through2')
 var copy = require('shallow-copy')
+var defined = require('defined')
+var once = require('once')
 
 var loader = require('./lib/load/http.js')
 
@@ -57,8 +59,15 @@ function ready (fn) {
   }
 }
 
-Hyperboot.prototype.load = ready(function (href, cb) {
+Hyperboot.prototype.load = ready(function (href, opts, cb) {
   var self = this
+  if (!opts) opts = {}
+  if (typeof opts === 'function') {
+    cb = opts
+    opts = {}
+  }
+  cb = once(cb || noop)
+
   var pending = 1, vers
   var seen = copy(self._seen)
   delete seen[href]
@@ -67,7 +76,7 @@ Hyperboot.prototype.load = ready(function (href, cb) {
     seen: seen,
     seenVersions: self._seenv,
     extra: self._extra,
-    load: loader
+    load: defined(opts.load, loader)
   }, onwalk)
   w.on('version', function (v, body) {
     pending++

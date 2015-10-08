@@ -139,10 +139,15 @@ Load all the known versions as `cb(err, versions)`.
 
 The format of each version object is described in the `'version'` event below.
 
-## var walk = boot.load(href, cb)
+## var walk = boot.load(href, opts={}, cb)
 
 Walk the hyperboot data at `href` recursively looking for new versions.
 `cb(err, versions)` fires with an array of the versions found.
+
+Specify a custom loader with `opts.load`. `opts.load(href, opts, cb)` fires
+every time hyperboot needs to make a request for a resource and the loader
+should call `cb(null, body, extra)` with the request `body` and any `extra`
+parameters that will be fed into `opts` on future requests.
 
 `walk` is an event emitter that emits `'version'` events for each new available
 webapp version found under `href`.
