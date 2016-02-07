@@ -51,7 +51,7 @@ Hyperboot.prototype.publish = function (version, opts, cb) {
     store: function (size, opts) {
       return self.store(size, { name: key })
     },
-    pieceLength: opts.pieceLength || 1024*1024*1024
+    pieceLength: stream.pieceLength
   })
   self.client.seed([stream], xopts, function (torrent) {
     var pending = 2

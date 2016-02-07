@@ -7,22 +7,19 @@
   "description": "offline webapp bootloader",
   "main": "index.js",
   "dependencies": {
-    "cheerio": "~0.19.0",
-    "concat-stream": "^1.5.0",
-    "defined": "^1.0.0",
-    "has": "^1.0.1",
-    "html-version": "^1.1.2",
-    "inherits": "^2.0.1",
-    "levelup-defaults": "^1.0.2",
-    "lexicographic-integer": "^1.1.0",
+    "chloride": "^2.0.1",
+    "fd-chunk-store": "^2.0.0",
+    "hyperlog-join": "^1.3.0",
+    "level": "^1.4.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
-    "nets": "^3.1.0",
-    "once": "^1.3.2",
-    "semver": "^5.0.3",
-    "sha.js": "^2.4.4",
-    "shallow-copy": "~0.0.1",
-    "through2": "^2.0.0"
+    "randombytes": "^2.0.2",
+    "subleveldown": "^2.1.0",
+    "swarmlog": "^1.1.0",
+    "through2": "^2.0.0",
+    "webtorrent": "^0.73.1",
+    "write-only-stream": "^1.1.0",
+    "xtend": "^4.0.1"
   },
   "devDependencies": {
     "tape": "^4.1.0"
