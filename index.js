@@ -48,14 +48,21 @@ Hyperboot.prototype.publish = function (version, opts, cb) {
 
   var key = randombytes(32).toString('hex')
   var xopts = xtend(opts, {
-    store: self.store(stream.pieceLength, { name: key })
+    store: function (size, opts) {
+      return self.store(size, { name: key })
+    },
+    pieceLength: opts.pieceLength || 1024*1024*1024
   })
   self.client.seed([stream], xopts, function (torrent) {
+    var pending = 2
     self.log.append({
       version: version,
-      magnetURI: torrent.magnetURI,
-      storeKey: key
-    }, cb)
+      magnetURI: torrent.magnetURI
+    }, done)
+    self.filedb.put(torrent.magnetURI, key, done)
+    function done () {
+      if (--pending === 0) cb(null, torrent.magnetURI)
+    }
   })
   return writeonly(stream)
 }
