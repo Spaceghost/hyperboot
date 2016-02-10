@@ -18,8 +18,9 @@ function Hyperboot (opts) {
     db: sub(opts.db, LOGDB),
     valueEncoding: 'json'
   }))
-  self.filedb = sub(opts.db, FILES)
-  self.client = webtorrent()
+  self.client = webtorrent({
+    wrtc: opts.wrtc
+  })
   self.store = opts.store
 
   self.versions = join({
@@ -42,27 +43,25 @@ Hyperboot.prototype.publish = function (version, opts, cb) {
   if (!opts) opts = {}
   if (!cb) cb = noop
 
-  var stream = through()
-  stream.name = opts.name || 'index.html'
-  stream.pieceLength = opts.pieceLength || 1024*1024*1024
-
   var key = randombytes(32).toString('hex')
   var xopts = xtend(opts, {
+    name: opts.name || 'index.html'
+    /*
     store: function (size, opts) {
       return self.store(size, { name: key })
-    },
-    pieceLength: stream.pieceLength
+    }
+    */
   })
+
+  var stream = through()
   self.client.seed([stream], xopts, function (torrent) {
-    var pending = 2
-    self.log.append({
+    var doc = {
       version: version,
       magnetURI: torrent.magnetURI
-    }, done)
-    self.filedb.put(torrent.magnetURI, key, done)
-    function done () {
-      if (--pending === 0) cb(null, torrent.magnetURI)
     }
+    self.log.append(doc, function () {
+      cb(null, torrent.magnetURI)
+    })
   })
   return writeonly(stream)
 }

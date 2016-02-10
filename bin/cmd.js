@@ -18,9 +18,9 @@ var boot = hyperboot({
   store: function (size, opts) {
     return fdstore(size, { path: path.join('.boot/store', opts.name) })
   },
-  //wrtc: require('wrtc'),
+  wrtc: require('wrtc'),
   keys: require(path.join(process.cwd(), '.boot/keys')),
-  hubs: [ 'http://localhost:9000' ]
+  hubs: [ 'https://signalhub.publicbits.org/' ]
 })
 
 if (argv._[0] === 'publish') {
