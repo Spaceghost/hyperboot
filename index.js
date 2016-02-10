@@ -45,12 +45,10 @@ Hyperboot.prototype.publish = function (version, opts, cb) {
 
   var key = randombytes(32).toString('hex')
   var xopts = xtend(opts, {
-    name: opts.name || 'index.html'
-    /*
+    name: opts.name || 'index.html',
     store: function (size, opts) {
       return self.store(size, { name: key })
     }
-    */
   })
 
   var stream = through()
