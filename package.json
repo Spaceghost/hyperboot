@@ -9,11 +9,13 @@
   "dependencies": {
     "chloride": "^2.0.1",
     "fd-chunk-store": "^2.0.0",
+    "homedir": "^0.6.0",
     "hyperlog-join": "^1.3.0",
     "level": "^1.4.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "randombytes": "^2.0.2",
+    "ssb-keys": "^4.0.10",
     "subleveldown": "^2.1.0",
     "swarmlog": "^1.1.0",
     "through2": "^2.0.0",
