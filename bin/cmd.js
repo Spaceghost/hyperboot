@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 var RPC = require('swarmbot/rpc')
-var swarmlog = require('swarmlog')
 var fs = require('fs')
 var path = require('path')
 var xdg = require('xdg-basedir')
@@ -8,11 +7,13 @@ var level = require('level')
 var mkdirp = require('mkdirp')
 var ssbkeys = require('ssb-keys')
 var sodium = require('chloride')
+var hyperlog = require('hyperlog')
+var hsodium = require('hyperlog-sodium')
+var normkey = require('swarmlog/normkey.js')
+var defined = require('defined')
 
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2))
-
-var swconfig = require(path.join(xdg.config, 'swarmbot/config.json'))
 
 if (argv._[0] === 'init') {
   var rpc = RPC()
@@ -39,6 +40,7 @@ if (argv._[0] === 'init') {
       if (mirrors.indexOf(id) < 0) {
         rpc.mirror(id, function (err) {
           if (err) error(err)
+          else process.exit(0)
         })
       }
     })
@@ -66,6 +68,10 @@ if (argv._[0] === 'init') {
       time: new Date().toISOString(),
       link: torrent.magnetURI
     })
+    var s = rpc.replicateStream(function () {
+      console.log('replication complete')
+    })
+    s.pipe(log.replicate()).pipe(s)
   }
 } else if (argv._[0] === 'versions') {
   //...
@@ -94,7 +100,7 @@ function getlog (cb) {
 
 function createLog (id, dbdir, cb) {
   var dir = path.dirname(dbdir)
-  var keyfile = path.join(dir, id + '.keys')
+  var keyfile = path.join(dir, Buffer(id, 'base64').toString('hex') + '.keys')
   fs.readFile(keyfile, 'utf8', function (err, src) {
     if (src) {
       try { var keys = JSON.parse(src) }
@@ -110,12 +116,11 @@ function createLog (id, dbdir, cb) {
   })
 
   function ready (keys) {
-    var log = swarmlog({
+    var log = hlog({
       db: level(dbdir),
       keys: keys,
       sodium: sodium,
-      valueEncoding: 'json',
-      hubs: swconfig.hubs
+      valueEncoding: 'json'
     })
     cb(null, id, log)
   }
@@ -140,10 +145,11 @@ function getdir (dir, cb) {
 
 function createKeys (cb) {
   var keys = ssbkeys.generate()
+  var id = keys.public
   var dir = path.join(xdg.config, 'hyperboot', 'app')
   mkdirp(dir, function (err) {
     if (err) return cb(err)
-    var keyfile = path.join(dir, id + '.keys')
+    var keyfile = path.join(dir, Buffer(id, 'base64').toString('hex') + '.keys')
     fs.writeFile(keyfile, strj(keys), function (err) {
       if (err) cb(err)
       else cb(null, keys)
@@ -158,4 +164,20 @@ function error (err) {
 
 function strj (obj) {
   return JSON.stringify(obj, null, 2) + '\n'
+}
+
+function hlog (opts) {
+  if (!opts) opts = {}
+  var keys = opts.keys || {}
+  var kopts = {
+    publicKey: normkey(defined(
+      opts.publicKey, opts.public, opts.pub, opts.identity, opts.id,
+      keys.publicKey, keys.public, keys.pub, keys.identity, keys.id
+    )),
+    secretKey: normkey(defined(
+      opts.secretKey, opts.secret, opts.private, opts.priv,
+      keys.secretKey, keys.secret, keys.private, keys.priv
+    ))
+  }
+  return hyperlog(opts.db, hsodium(opts.sodium, kopts, opts))
 }

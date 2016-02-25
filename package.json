@@ -10,6 +10,7 @@
     "auto-daemon": "^2.3.0",
     "chloride": "^2.0.1",
     "collect-stream": "^1.1.1",
+    "defined": "^1.0.0",
     "fd-chunk-store": "^2.0.0",
     "fs-blob-store": "^5.2.1",
     "homedir": "^0.6.0",
