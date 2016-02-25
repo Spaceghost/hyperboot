@@ -28,8 +28,12 @@ function Iface (server, stream, args) {
   })
 }
 
+Iface.prototype.init = function (dir, cb) {
+  this.hyperboot.init(dir, cb)
+}
+
 Iface.prototype.id = function (cb) {
-  cb(null, keys.public)
+  cb(null, this.keys.public)
 }
 
 Iface.prototype.publish = function (files, opts, cb) {
