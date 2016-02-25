@@ -15,7 +15,13 @@ var defined = require('defined')
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2))
 
-if (argv._[0] === 'init') {
+if (argv._[0] === 'id') {
+  getdir(process.cwd(), function (err, dir) {
+    if (err) return error(err)
+    var pkg = require(path.join(dir, 'hyperboot.json'))
+    console.log(pkg.id)
+  })
+} else if (argv._[0] === 'init') {
   var rpc = RPC()
   var hfile = path.join(process.cwd(), 'hyperboot.json')
   fs.stat(hfile, function (err, stat) {
