@@ -68,10 +68,12 @@ if (argv._[0] === 'init') {
       time: new Date().toISOString(),
       link: torrent.magnetURI
     })
-    var s = rpc.replicateStream(function () {
-      console.log('replication complete')
+    var r = rpc.replicateStream(id)
+    var l = log.replicate()
+    l.on('end', function () {
+      process.exit(0)
     })
-    s.pipe(log.replicate()).pipe(s)
+    r.pipe(l).pipe(r)
   }
 } else if (argv._[0] === 'versions') {
   //...
@@ -81,6 +83,7 @@ if (argv._[0] === 'init') {
     ;(magnets || []).forEach(function (magnet) {
       console.log(magnet)
     })
+    process.exit(0)
   })
 }
 
