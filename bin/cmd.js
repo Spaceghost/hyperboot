@@ -6,21 +6,69 @@ var path = require('path')
 var xdg = require('xdg-basedir')
 var level = require('level')
 var mkdirp = require('mkdirp')
+var ssbkeys = require('ssb-keys')
+var sodium = require('chloride')
 
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2))
 
-if (argv._[0] === 'publish') {
+var swconfig = require(path.join(xdg.config, 'swarmbot/config.json'))
+
+if (argv._[0] === 'init') {
+  var rpc = RPC()
+  var hfile = path.join(process.cwd(), 'hyperboot.json')
+  fs.stat(hfile, function (err, stat) {
+    if (!stat) {
+      createKeys(function (err, keys) {
+        if (err) return error(err)
+        var src = strj({ id: keys.public })
+        fs.writeFile(hfile, src, function (err) {
+          if (err) return error(err)
+          console.error('created file: ' + hfile)
+          console.error('app key: ' + keys.public)
+          getlog(onlog)
+        })
+      })
+    } else getlog(onlog)
+  })
+  function onlog (err, id, log) {
+    if (err) return error(err)
+    rpc.mirroring(function (err, mirrors) {
+      if (err) return error(err)
+      if (!mirrors) mirrors = []
+      if (mirrors.indexOf(id) < 0) {
+        rpc.mirror(id, function (err) {
+          if (err) error(err)
+        })
+      }
+    })
+  }
+} else if (argv._[0] === 'publish') {
   var rpc = RPC()
   var cwd = process.cwd()
   var files = argv._.slice(1).map(function (file) {
     return path.resolve(file)
   })
-  rpc.emitEvent('seed-files', files)
-  rpc.mirroring(function (err, mirrors) {
-    console.log(mirrors)
+  var pending = 2, torrent, id, log
+  getlog(function (err, i, l) {
+    if (err) return error(err)
+    id = i, log = l
+    done()
   })
+  rpc.emitEvent('seed-files', files, function (t) {
+    console.log(t.magnetURI)
+    torrent = t
+    done()
+  })
+  function done () {
+    if (--pending !== 0) return
+    log.append({
+      time: new Date().toISOString(),
+      link: torrent.magnetURI
+    })
+  }
 } else if (argv._[0] === 'versions') {
+  //...
 } else if (argv._[0] === 'seeding') {
   var rpc = RPC()
   rpc.emitEvent('seed-list', function (err, magnets) {
@@ -32,13 +80,49 @@ if (argv._[0] === 'publish') {
 
 function getlog (cb) {
   getdir(process.cwd(), function (err, dir) {
-    fs.readFile(path.join(dir, 'hyperboot.json'), function (err, src) {
+    fs.readFile(path.join(dir, 'hyperboot.json'), 'utf8', function (err, src) {
+      if (err) return cb(err)
+      try { var pkg = JSON.parse(src) }
+      catch (err) { return cb(err) }
+      dbdir(pkg.id, function (err, dbdir) {
+        if (err) return cb(err)
+        else createLog(pkg.id, dbdir, cb)
+      })
     })
   })
 }
 
+function createLog (id, dbdir, cb) {
+  var dir = path.dirname(dbdir)
+  var keyfile = path.join(dir, id + '.keys')
+  fs.readFile(keyfile, 'utf8', function (err, src) {
+    if (src) {
+      try { var keys = JSON.parse(src) }
+      catch (err) {}
+    }
+    if (!keys) {
+      keys = ssbkeys.generate()
+      fs.writeFile(keyfile, strj(keys), function (err) {
+        if (err) cb(err)
+        else ready(keys)
+      })
+    } else ready(keys)
+  })
+
+  function ready (keys) {
+    var log = swarmlog({
+      db: level(dbdir),
+      keys: keys,
+      sodium: sodium,
+      valueEncoding: 'json',
+      hubs: swconfig.hubs
+    })
+    cb(null, id, log)
+  }
+}
+
 function dbdir (id, cb) {
-  var dir = path.join(xdg.config, 'hyperboot', id + '.db')
+  var dir = path.join(xdg.config, 'hyperboot', 'app', id + '.log')
   mkdirp(dir, function (err) {
     if (err) cb(err)
     else cb(null, dir)
@@ -47,8 +131,31 @@ function dbdir (id, cb) {
 
 function getdir (dir, cb) {
   fs.stat(path.join(dir, 'hyperboot.json'), function (err, stat) {
+    if (stat) return cb(null, dir)
     var ndir = path.dirname(dir)
     if (ndir === dir) cb(null, undefined)
     else getdir(ndir, cb)
   })
+}
+
+function createKeys (cb) {
+  var keys = ssbkeys.generate()
+  var dir = path.join(xdg.config, 'hyperboot', 'app')
+  mkdirp(dir, function (err) {
+    if (err) return cb(err)
+    var keyfile = path.join(dir, id + '.keys')
+    fs.writeFile(keyfile, strj(keys), function (err) {
+      if (err) cb(err)
+      else cb(null, keys)
+    })
+  })
+}
+
+function error (err) {
+  console.error(err.message || err)
+  process.exit(1)
+}
+
+function strj (obj) {
+  return JSON.stringify(obj, null, 2) + '\n'
 }
