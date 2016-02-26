@@ -73,13 +73,22 @@ if (argv._[0] === 'id') {
     log.append({
       time: new Date().toISOString(),
       link: torrent.magnetURI
-    })
-    var r = rpc.replicateStream(id)
-    var l = log.replicate()
-    l.on('end', function () {
-      process.exit(0)
-    })
-    r.pipe(l).pipe(r)
+    }, onappend)
+
+    function onappend () {
+      var r = rpc.replicateStream(id, function () {
+        console.log('REP CB', arguments)
+      })
+      r.on('end', function () {
+        console.log('R END')
+      })
+      var l = log.replicate()
+      l.on('end', function () {
+        console.log('L END')
+        //process.exit(0)
+      })
+      r.pipe(l).pipe(r)
+    }
   }
 } else if (argv._[0] === 'versions') {
   //...
