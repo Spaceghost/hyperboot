@@ -95,6 +95,9 @@ if (argv._[0] === 'id') {
 
 function getlog (cb) {
   getdir(process.cwd(), function (err, dir) {
+    if (!dir) return cb(new Error(
+      'project not initialized, run `hyperboot init`'))
+
     fs.readFile(path.join(dir, 'hyperboot.json'), 'utf8', function (err, src) {
       if (err) return cb(err)
       try { var pkg = JSON.parse(src) }
