@@ -24,7 +24,16 @@ if (argv._[0] === 'id') {
 } else if (argv._[0] === 'init') {
   var rpc = RPC()
   var hfile = path.join(process.cwd(), 'hyperboot.json')
-  fs.stat(hfile, function (err, stat) {
+  rpc.readConfig(function (err, config) {
+    if (!config) config = {}
+    var plugins = config.plugins || []
+    if (plugins.indexOf('swarmbot-webtorrent') < 0) {
+      error('swarmbot-webtorrent plugin not registered. Do:\n\n'
+        + '  swarmbot plugin install swarmbot-webtorrent\n'
+        + '  swarmbot restart\n')
+    } else fs.stat(hfile, onstat)
+  })
+  function onstat (err, stat) {
     if (!stat) {
       createKeys(function (err, keys) {
         if (err) return error(err)
@@ -37,7 +46,7 @@ if (argv._[0] === 'id') {
         })
       })
     } else getlog(onlog)
-  })
+  }
   function onlog (err, id, log) {
     if (err) return error(err)
     rpc.mirroring(function (err, mirrors) {
