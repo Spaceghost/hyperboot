@@ -94,7 +94,14 @@ if (argv._[0] === 'id') {
     }
   }
 } else if (argv._[0] === 'versions') {
-  //...
+  getlog(function (err, id, log) {
+    if (err) return error(err)
+    log.createReadStream().on('data', function (row) {
+      if (row.value && /^magnet:/.test(row.value.link)) {
+        console.log(row.value.link)
+      }
+    })
+  })
 } else if (argv._[0] === 'seeding') {
   var rpc = RPC()
   rpc.emitEvent('seed-list', function (err, magnets) {
