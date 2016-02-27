@@ -29,7 +29,7 @@ if (argv._[0] === 'id') {
     var plugins = config.plugins || []
     if (plugins.indexOf('swarmbot-webtorrent') < 0) {
       error('swarmbot-webtorrent plugin not registered. Do:\n\n'
-        + '  swarmbot plugin install swarmbot-webtorrent\n'
+        + '  swarmbot plugins install swarmbot-webtorrent\n'
         + '  swarmbot restart\n')
     } else fs.stat(hfile, onstat)
   })
@@ -85,16 +85,10 @@ if (argv._[0] === 'id') {
     }, onappend)
 
     function onappend () {
-      var r = rpc.replicateStream(id, function () {
-        console.log('REP CB', arguments)
-      })
-      r.on('end', function () {
-        console.log('R END')
-      })
+      var r = rpc.replicateStream(id)
       var l = log.replicate()
       l.on('end', function () {
-        console.log('L END')
-        //process.exit(0)
+        process.exit(0)
       })
       r.pipe(l).pipe(r)
     }
