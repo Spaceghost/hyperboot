@@ -101,15 +101,17 @@ Hyperboot.prototype.stop = function (key, cb) {
   })
 }
 
-Hyperboot.prototype.versions = function () {
+Hyperboot.prototype.versions = function (opts) {
   var self = this
-  return pump(self.appfeed.createReadStream(), through.obj(write))
+  return pump(self.appfeed.createReadStream(opts), through.obj(write))
   function write (row, enc, next) {
     self.infodb.get(row.key, function (err, doc) {
       var result = {
+        key: row.key,
         version: row.value.version,
         link: row.value.link,
         time: row.value.time,
+        files: row.value.files,
         seeding: Boolean(self.client.get(row.value.link))
       }
       if (doc) {

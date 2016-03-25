@@ -81,7 +81,9 @@ if (argv._[0] === 'id') {
     if (--pending !== 0) return
     log.append({
       time: new Date().toISOString(),
-      link: torrent.magnetURI
+      version: argv.version,
+      link: torrent.magnetURI,
+      files: torrent.files
     }, onappend)
 
     function onappend () {
